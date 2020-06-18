@@ -9,28 +9,29 @@ import java.util.Optional;
 
 @NoRepositoryBean
 public interface CrudService<T, ID>{
-    <S extends T> S save(S var1);
+    <S extends T> S save(S var);
 
-    <S extends T> Iterable<S> saveAll(Iterable<S> var1);
+    <S extends T> Iterable<S> saveAll(Iterable<S> var);
 
-    Optional<T> findById(ID var1);
+    Optional<T> findById(ID var);
 
-    boolean existsById(ID var1);
+    boolean existsById(ID var);
 
 
     Iterable<T> findAll();
 
-    Iterable<T> findAllById(Iterable<ID> var1);
+    Iterable<T> findAllById(Iterable<ID> var);
 
     long count();
 
-    void deleteById(ID var1);
+    void deleteById(ID var);
 
-    void delete(T var1);
+    void delete(T var);
 
-    void deleteAll(Iterable<? extends T> var1);
+    void deleteAll(Iterable<? extends T> var);
 
     void deleteAll();
+
 
 
 }

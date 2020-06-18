@@ -12,8 +12,7 @@ public class BlogApplication {
 
 	public static void main(String[] args) {
 		ConfigurableApplicationContext run = SpringApplication.run(BlogApplication.class, args);
-//		Config bean = run.getBean(Config.class);
-//		System.out.println(bean);
+
 	}
 
 }

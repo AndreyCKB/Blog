@@ -5,8 +5,6 @@ package com.example.rest.spring.blog.models;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -15,7 +13,7 @@ public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
+    @Column(name = "post_id")
     private long id;
 
     @Column(name="title", unique = true, length = 100)
@@ -40,19 +38,11 @@ public class Post {
     @Column(name="changed_Post_Date")
     private LocalDateTime changedPostDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Author author;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    private Author author;
 
 
-    public LocalDateTime getCreatedPostDate() {
-        return createdPostDate;
-    }
-
-    public void setCreatedPostDate(LocalDateTime createdPostDate) {
-        this.createdPostDate = createdPostDate;
-    }
-
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
@@ -91,6 +81,30 @@ public class Post {
     public void setViews(int views) {
         this.views = views;
     }
+
+    public LocalDateTime getCreatedPostDate() {
+        return createdPostDate;
+    }
+
+    public void setCreatedPostDate(LocalDateTime createdPostDate) {
+        this.createdPostDate = createdPostDate;
+    }
+
+    public LocalDateTime getChangedPostDate() {
+        return changedPostDate;
+    }
+
+    public void setChangedPostDate(LocalDateTime changedPostDate) {
+        this.changedPostDate = changedPostDate;
+    }
+
+//    public Author getAuthor() {
+//        return author;
+//    }
+//
+//    public void setAuthor(Author author) {
+//        this.author = author;
+//    }
 
     @Override
     public String toString() {

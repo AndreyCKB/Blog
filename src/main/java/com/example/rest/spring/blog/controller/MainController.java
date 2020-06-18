@@ -11,7 +11,7 @@ public class MainController {
 
     @GetMapping("/")
     public String about() {
-        return "redirect:/blog/list";
+        return "redirect:/login";
     }
 
     @GetMapping("/about")
