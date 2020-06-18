@@ -3,14 +3,19 @@ package com.example.rest.spring.blog.service.user;
 import com.example.rest.spring.blog.models.User;
 import com.example.rest.spring.blog.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.Optional;
 
 @Service
 @Transactional
 public class UserServiceImpl implements UserService{
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private UserRepository userRepository;
@@ -25,6 +30,9 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public <S extends User> S save(S user) {
+        //Разделить на 2 блока update и add
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setDateRegistration(new Date());
         return this.userRepository.save(user);
     }
 

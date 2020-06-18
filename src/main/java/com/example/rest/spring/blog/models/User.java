@@ -20,7 +20,7 @@ public class User {
     private String email;
 
     @NotBlank()
-    @Size(min =7, max = 23, message ="Длина пароля от 7 до 23 символов" )
+    @Column(name = "password", nullable = false)
     private String password;
 
 //    @NotBlank()

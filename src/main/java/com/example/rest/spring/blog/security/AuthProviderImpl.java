@@ -3,6 +3,7 @@ package com.example.rest.spring.blog.security;
 import com.example.rest.spring.blog.models.User;
 import com.example.rest.spring.blog.service.user.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -10,6 +11,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -20,6 +23,9 @@ public class AuthProviderImpl implements AuthenticationProvider {
     @Autowired
     private UserServiceImpl userService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String email = authentication.getName();
@@ -28,7 +34,7 @@ public class AuthProviderImpl implements AuthenticationProvider {
             throw  new UsernameNotFoundException("Пользователь не найден");
         }
         String password = authentication.getCredentials().toString();
-        if (!user.getPassword().equals(password)) {
+        if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new BadCredentialsException("Не верный пароль");
         }
         List<GrantedAuthority> authorities = new ArrayList<>();
@@ -44,6 +50,14 @@ public class AuthProviderImpl implements AuthenticationProvider {
 
     @Override
     public boolean supports(Class<?> aClass) {
+
         return aClass.equals(UsernamePasswordAuthenticationToken.class);
     }
+
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
 }
+
+

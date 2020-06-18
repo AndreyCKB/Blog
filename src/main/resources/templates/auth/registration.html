@@ -15,13 +15,16 @@
     <h1></h1>
     <div class="alert alert-info mt 2">
         <form action="/registration" method="post">
-            <input type="email" name="email" placeholder="Введите ваш email" class="form-control"><br>
-            <input type="password" name="password" placeholder="Введите ваш пароль" class="form-control"><br>
-            <input type="password" name="pas_confirm" placeholder="Введите ваш пароль ещё раз" class="form-control"><br>
+            <input type="email" name="email" placeholder="Введите ваш email" class="form-control" required><br>
+            <input type="password" name="password" pattern="^\S{6,}$" placeholder="Введите ваш пароль" class="form-control" required><br>
+            <input type="password" name="checked_password" pattern="^\S{6,}$" placeholder="Подтвердите ваш пароль" class="form-control" required><br>
             <button type="submit" class="btn btn-success">Войти</button>
         </form>
     </div>
 </div>
+
+
+
 
 <div th:insert="blocks/footer :: footer"></div>
 

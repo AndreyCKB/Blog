@@ -12,11 +12,11 @@
 <header th:insert="blocks/header :: header"></header>
 
 <div class="container mt-5">
-    <h1></h1>
+    <h2 th:if="${error_auth}" style="color : red">Введён неверный <strong>email</strong> или <strong>password</strong> </h2>
     <div class="alert alert-info mt 2">
         <form action="/login/process" method="post">
             <input type="email" name="email" placeholder="Введите ваш email" class="form-control"><br>
-            <input type="password" name="password" placeholder="Введите ваш пароль" class="form-control"><br>
+            <input type="password" name="password" placeholder="Введите ваш password" class="form-control"><br>
             <button type="submit" class="btn btn-success">Войти</button><br>
         </form>
             <a th:href="'/registration'" class="btm btm-warning">Зарегистрироваться</a>

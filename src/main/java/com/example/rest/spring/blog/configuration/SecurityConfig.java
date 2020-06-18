@@ -27,8 +27,10 @@ public class SecurityConfig  extends WebSecurityConfigurerAdapter {
                 .loginProcessingUrl("/login/process")
                 .usernameParameter("email")
                 .passwordParameter("password")
-                .and().logout();
-    }
+                .failureUrl("/login?error_auth=true")
+                .and().exceptionHandling()
+                .accessDeniedPage("/blog/list")
+                .and().logout();    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
