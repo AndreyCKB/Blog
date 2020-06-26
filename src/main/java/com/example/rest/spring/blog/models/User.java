@@ -1,10 +1,13 @@
 package com.example.rest.spring.blog.models;
 
+import com.example.rest.spring.blog.util.DateConverter;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import java.text.ParseException;
 import java.util.Date;
 
 @Entity
@@ -17,28 +20,38 @@ public class User {
     private long id;
 
     @Email
+    @Column(name = "email", nullable = false)
     private String email;
 
     @NotBlank()
     @Column(name = "password", nullable = false)
     private String password;
 
-//    @NotBlank()
-//    @Column(name = "first_name", nullable = false, length = 25)
-//    private String firstName;
-//
-//    @NotBlank()
-//    @Column(name = "surname", nullable = false, length = 50)
-//    private String surname;
-//
-//    @Column(name = "middle_name", length = 25)
-//    private String middleName;
+
+    @Column(name = "first_name", length = 25)
+    private String firstName;
+
+
+    @Column(name = "surname", length = 50)
+    private String surname;
+
+    @Column(name = "middle_name", length = 25)
+    private String middleName;
 
     @Column(name = "Date_registration", nullable = false)
     private Date dateRegistration;
 
-//    @Column(name = "isAdmin", nullable = false)
-//    private Boolean isAdmin;
+    @Column(name = "birthday")
+    private Date birthday;
+
+    public Date getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
+
 
     public long getId() {
         return id;
@@ -64,29 +77,29 @@ public class User {
         this.password = password;
     }
 
-//    public String getFirstName() {
-//        return firstName;
-//    }
-//
-//    public void setFirstName(String firstName) {
-//        this.firstName = firstName;
-//    }
-//
-//    public String getSurname() {
-//        return surname;
-//    }
-//
-//    public void setSurname(String surname) {
-//        this.surname = surname;
-//    }
-//
-//    public String getMiddleName() {
-//        return middleName;
-//    }
-//
-//    public void setMiddleName(String middleName) {
-//        this.middleName = middleName;
-//    }
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
 
     public Date getDateRegistration() {
         return dateRegistration;
@@ -96,13 +109,6 @@ public class User {
         this.dateRegistration = dateRegistration;
     }
 
-//    public Boolean getAdmin() {
-//        return isAdmin;
-//    }
-//
-//    public void setAdmin(Boolean admin) {
-//        isAdmin = admin;
-//    }
 
     @Override
     public String toString() {
@@ -110,7 +116,11 @@ public class User {
                 "id=" + id +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", surname='" + surname + '\'' +
+                ", middleName='" + middleName + '\'' +
                 ", dateRegistration=" + dateRegistration +
+                ", birthday=" + birthday +
                 '}';
     }
 }

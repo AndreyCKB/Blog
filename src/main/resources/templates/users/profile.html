@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="registration"></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+</head>
+    <body>
+
+    <!--Вставляет блок из файла header.html с классом header -->
+    <header th:insert="blocks/header :: header"></header>
+
+        <div class="container mt-5">
+            <div th:object="${user}" class="alert alert-info mt 2">
+
+                <label>  Ваш email: </strong>
+                    <strong style="color:black" th:text="*{email}"></strong>
+                    <a href="/user/change-email" style="color:green"> Изменить </a>
+                </label> <br>
+
+                <form action="/user/profile" method="post">
+
+                    <input type="hidden" name="email" th:value="*{email}">
+
+                    <label style="color:black"> Имя
+                        <input type="text" name="firstName" th:value="*{firstName}" placeholder="Введите ваше Имя" class="form-control" >
+                    </label> <br>
+
+                    <label style="color:black"> Фамилия
+                        <input type="text" name="surname" th:value="*{surname}" placeholder="Введите вашу Фамилию" class="form-control" >
+                    </label> <br>
+
+                    <label style="color:black"> Отчество
+                        <input type="text" name="middleName" th:value="*{middleName}" placeholder="Введите ваше Отчество" class="form-control" >
+                    </label> <br>
+
+                    <label style="color:black"> День рождения
+                        <span th:if="${birthday} == null">
+                        <input type="date" name="birthday_str" th:value="${birthday}" class="form-control" >
+                        </span>
+                        <span th:if="${birthday} != null" th:text="': ' + ${birthday}" >
+                        </span>
+                    </label> <br>
+
+                    <label style="color:black"> Дата и время регистрации:
+                        <span th:text="*{dateRegistration}"></span>
+                    </label> <br>
+
+                    <a href="/user/change-password" style="color:green"> Изменить пароль </a><br>
+
+                    <button type="submit" class="btn btn-success">Сохранить</button>
+                    <button formaction="/logout" class="btn btn-warning">Выйти из учётной записи</button>
+
+                </form>
+            </div>
+
+        </div>
+
+        <div th:insert="blocks/footer :: footer"></div>
+
+    </body>
+</html>

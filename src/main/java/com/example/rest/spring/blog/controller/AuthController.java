@@ -2,40 +2,33 @@ package com.example.rest.spring.blog.controller;
 
 import com.example.rest.spring.blog.models.User;
 import com.example.rest.spring.blog.service.user.UserService;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Date;
 
 @Controller
 public class AuthController {
 
-    @Autowired
     private UserService userService;
 
-    public UserService getUserService() {
-        return userService;
-    }
-
-    public void setUserService(UserService userService) {
+    public AuthController(UserService userService) {
         this.userService = userService;
     }
-
-
 
     @GetMapping("/registration")
     public String getSignUp(Model model) {
         return "/auth/registration";
     }
 
-//    @Valid
+
     @PostMapping("/registration")
-    public String signUp(@ModelAttribute  User user, BindingResult result) {
+    public String signUp(@ModelAttribute  User user,
+                         @RequestParam(name = "check_password", required = true) String checkPassword,
+                          Model model) {
+        if ( !checkPassword.equals(user.getPassword())) {
+            model.addAttribute("errorMessage", "Подтверждения пароля и пароль не совпадают");
+            return "/auth/registration";
+        }
         this.userService.save(user);
         return "redirect:/login";
     }

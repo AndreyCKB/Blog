@@ -12,13 +12,17 @@
 <header th:insert="blocks/header :: header"></header>
 
 <div class="container mt-5">
-    <h1></h1>
     <div class="alert alert-info mt 2">
+        <p style="color:red" th:text="${errorMessage}"></p>
         <form action="/registration" method="post">
+
             <input type="email" name="email" placeholder="Введите ваш email" class="form-control" required><br>
+
             <input type="password" name="password" pattern="^\S{6,}$" placeholder="Введите ваш пароль" class="form-control" required><br>
-            <input type="password" name="checked_password" pattern="^\S{6,}$" placeholder="Подтвердите ваш пароль" class="form-control" required><br>
-            <button type="submit" class="btn btn-success">Войти</button>
+
+            <input type="password" name="check_password" pattern="^\S{6,}$" placeholder="Подтвердите пароль" class="form-control" required><br>
+
+            <button type="submit" class="btn btn-success"> Зарегистрироваться </button>
         </form>
     </div>
 </div>

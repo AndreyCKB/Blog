@@ -31,10 +31,12 @@ public class AuthProviderImpl implements AuthenticationProvider {
         String email = authentication.getName();
         User user = this.userService.findByEmailIgnoreCase(email);
         if (!checkEmailUser(user, email)) {
+            System.out.println("Пользователь не найден");
             throw  new UsernameNotFoundException("Пользователь не найден");
         }
         String password = authentication.getCredentials().toString();
         if (!passwordEncoder.matches(password, user.getPassword())) {
+            System.out.println("Не верный пароль");
             throw new BadCredentialsException("Не верный пароль");
         }
         List<GrantedAuthority> authorities = new ArrayList<>();
@@ -42,7 +44,7 @@ public class AuthProviderImpl implements AuthenticationProvider {
     }
 
     private boolean checkEmailUser(User user, String email){
-        if (user != null && user.getEmail().equals(email))
+        if (user != null && user.getEmail().equalsIgnoreCase(email))
             return true;
         else
             return false;

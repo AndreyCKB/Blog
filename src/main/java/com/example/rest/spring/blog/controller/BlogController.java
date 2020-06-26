@@ -3,7 +3,6 @@ package com.example.rest.spring.blog.controller;
 import com.example.rest.spring.blog.models.Post;
 import com.example.rest.spring.blog.service.post.ParametrSort;
 import com.example.rest.spring.blog.service.post.PostService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,12 +15,7 @@ public class BlogController {
 
     private PostService postService;
 
-    @Autowired
     public BlogController(PostService postService) {
-        this.postService = postService;
-    }
-
-    public void setPostService(PostService postService) {
         this.postService = postService;
     }
 

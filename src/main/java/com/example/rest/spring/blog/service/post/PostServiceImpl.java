@@ -37,11 +37,6 @@ public class PostServiceImpl implements  PostService {
     }
 
     @Override
-    public Optional<Post> findById(Long id) {
-        return this.postRepository.findById(id);
-    }
-
-    @Override
     public boolean existsById(Long id) {
         return this.postRepository.existsById(id);
     }
@@ -52,10 +47,22 @@ public class PostServiceImpl implements  PostService {
         return this.postRepository.findAll(title);
     }
 
+
+    @Override
+    public Optional findById(Long var) {
+        return this.postRepository.findById(var);
+    }
+
     @Override
     public Iterable<Post> findAll() {
         return this.postRepository.findAll();
     }
+
+    @Override
+    public void deleteById(Long var) {
+
+    }
+
 
     @Override
     public Iterable<Post> findAllById(Iterable<Long> iterable) {
@@ -67,11 +74,6 @@ public class PostServiceImpl implements  PostService {
     @Override
     public long count() {
         return this.postRepository.count();
-    }
-
-    @Override
-    public void deleteById(Long id) {
-        this.postRepository.deleteById(id);
     }
 
     @Override

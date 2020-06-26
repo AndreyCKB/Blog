@@ -2,14 +2,11 @@ package com.example.rest.spring.blog.service.post;
 
 
 import com.example.rest.spring.blog.models.Post;
-import com.example.rest.spring.blog.service.CrudService;
+import com.example.rest.spring.blog.service.ExtendedService;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import java.time.LocalDateTime;
-
-public interface PostService extends CrudService<Post, Long> {
+public interface PostService extends ExtendedService<Post, Long> {
 
     void updateAnonsAndFullText(long postID, String anons, String fullText);
 

@@ -19,8 +19,8 @@ public class SecurityConfig  extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/registration",  "/login").anonymous()
-                .antMatchers("/blog/*").authenticated()
+                .antMatchers("/auth/*").anonymous()
+                .antMatchers("/blog/*" , "/user/*", "/").authenticated()
                 .and().csrf().disable()
                 .formLogin()
                 .loginPage("/login")
@@ -29,7 +29,7 @@ public class SecurityConfig  extends WebSecurityConfigurerAdapter {
                 .passwordParameter("password")
                 .failureUrl("/login?error_auth=true")
                 .and().exceptionHandling()
-                .accessDeniedPage("/blog/list")
+                .accessDeniedPage("/")
                 .and().logout();    }
 
     @Override
