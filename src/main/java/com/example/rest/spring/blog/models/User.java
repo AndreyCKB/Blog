@@ -1,14 +1,12 @@
 package com.example.rest.spring.blog.models;
 
-import com.example.rest.spring.blog.util.DateConverter;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 
-import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
@@ -27,10 +25,8 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
-
     @Column(name = "first_name", length = 25)
     private String firstName;
-
 
     @Column(name = "surname", length = 50)
     private String surname;
@@ -44,6 +40,17 @@ public class User {
     @Column(name = "birthday")
     private Date birthday;
 
+//    @OneToMany(mappedBy = "user",  orphanRemoval = true)
+//    private List<Post> posts;
+//
+//    public List<Post> getPosts() {
+//        return posts;
+//    }
+//
+//    public void setPosts(List<Post> posts) {
+//        this.posts = posts;
+//    }
+
     public Date getBirthday() {
         return birthday;
     }
@@ -51,7 +58,6 @@ public class User {
     public void setBirthday(Date birthday) {
         this.birthday = birthday;
     }
-
 
     public long getId() {
         return id;
@@ -109,6 +115,19 @@ public class User {
         this.dateRegistration = dateRegistration;
     }
 
+    public String fullName(){
+        String fullName;
+        String surname = this.surname != null ? this.surname : null;
+        if (surname != null){
+            String name  = this.firstName != null ? this.firstName.substring(0,1).toUpperCase() + "." : "";
+            String middleName  = this.middleName != null ? this.middleName.substring(0,1).toUpperCase() +"." : "";
+            fullName = surname + name + middleName;
+        }
+        else{
+            fullName = this.email.substring(0, email.indexOf("@") );
+        }
+        return fullName;
+    }
 
     @Override
     public String toString() {

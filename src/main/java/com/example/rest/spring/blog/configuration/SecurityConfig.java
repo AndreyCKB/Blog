@@ -20,7 +20,7 @@ public class SecurityConfig  extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/auth/*").anonymous()
-                .antMatchers("/blog/*" , "/user/*", "/").authenticated()
+                .antMatchers("/post/*" , "/user/*", "/").authenticated()
                 .and().csrf().disable()
                 .formLogin()
                 .loginPage("/login")

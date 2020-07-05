@@ -1,6 +1,8 @@
 package com.example.rest.spring.blog.service.post;
 
 
+import com.example.rest.spring.blog.exception.ErrorMessageForUserException;
+import com.example.rest.spring.blog.models.Comment;
 import com.example.rest.spring.blog.models.Post;
 import com.example.rest.spring.blog.service.ExtendedService;
 import org.springframework.data.domain.Page;
@@ -14,5 +16,7 @@ public interface PostService extends ExtendedService<Post, Long> {
 
     Iterable<Post> findByKeyword(String keyword);
 
-    Page findAllAndSortByParameter(int page, Sort parametrSort);
+    Page findAllAndSortByParameter(int page, Sort parameterSort) throws ErrorMessageForUserException;
+
+    void addCommentToPost(Comment comment, long postId) throws ErrorMessageForUserException;
 }

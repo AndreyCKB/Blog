@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+        <title>Блог сайта</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    </head>
+
+    <body>
+
+    <!--Вставляет блок из файла header.html с классом header -->
+    <header th:insert="blocks/header :: header"></header>
+
+    <div class="container mt-5">
+        <h1>Блог сайта</h1>
+        <div  class="alert alert-info mt 2">
+            <h3 th:text="${post.title}"/>
+            <p th:text="${post.anons}"/>
+            <p th:text="${post.fullText}"/>
+            <p> <b>Просмотров: </b> <span th:text="${post.views}"/> </p>
+            <p> <b>Дата создания поста: </b> <span th:text="${post.createdPostDate}"/> </p>
+            <p> <b>Дата пследнего редактирования поста: </b> <span th:text="${post.changedPostDate}"/> </p>
+            <a th:href="'/post/' + ${post.id} + '/edit'" class="btn btn-warning">Редактировать</a>
+            <a th:href="'/post/' + ${post.id} + '/delete'" class="btn btn-danger">Удалить</a>
+        </div>
+
+        <div>
+            <h3>Всего коментариев :</h3>
+            <form action="subscribe" th:attr="action=@{'/post/' + ${post.id} + '/add-comment'}"} method="post">
+                <input type="text" name="message" placeholder="Оставте ваш коментарий">
+                <br>
+                <button type="submit" class="btn btn-success">Опубликовать</button>
+            </form>
+        </div>
+
+    </div>
+
+    <div th:insert="blocks/comments :: comments"></div>
+
+    <div th:insert="blocks/footer :: footer"></div>
+
+    </body>
+
+</html>

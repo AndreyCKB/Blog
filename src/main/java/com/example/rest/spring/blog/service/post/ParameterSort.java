@@ -2,7 +2,7 @@ package com.example.rest.spring.blog.service.post;
 
 import org.springframework.data.domain.Sort;
 
-public enum ParametrSort {
+public enum ParameterSort {
     TITLE("По названию"){
         @Override
         public Sort getSort(){
@@ -37,7 +37,7 @@ public enum ParametrSort {
 
 
     private String parametrSort;
-    ParametrSort(String st) {
+    ParameterSort(String st) {
         this.parametrSort = st;
     }
 

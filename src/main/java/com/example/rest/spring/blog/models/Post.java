@@ -5,7 +5,10 @@ package com.example.rest.spring.blog.models;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+
+import java.util.Date;
+import java.util.List;
+
 
 @Entity
 @Table(name = "post")
@@ -30,17 +33,28 @@ public class Post {
     @Column(name="views")
     private int views;
 
-    @Basic
+    @Temporal(TemporalType.DATE)
     @Column(name="created_Post_Date")
-    private LocalDateTime createdPostDate;
+    private Date createdPostDate;
 
-    @Basic
+
+    @Temporal(TemporalType.DATE)
     @Column(name="changed_Post_Date")
-    private LocalDateTime changedPostDate;
+    private Date changedPostDate;
+
+    @OneToMany(mappedBy = "post",  orphanRemoval = true)
+    private List<Comment> comments;
 
 //    @ManyToOne(fetch = FetchType.LAZY)
-//    private Author author;
+//    private User user;
 
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
 
     public long getId() {
         return id;
@@ -82,29 +96,30 @@ public class Post {
         this.views = views;
     }
 
-    public LocalDateTime getCreatedPostDate() {
+    public Date getCreatedPostDate() {
         return createdPostDate;
     }
 
-    public void setCreatedPostDate(LocalDateTime createdPostDate) {
+    public void setCreatedPostDate(Date createdPostDate) {
         this.createdPostDate = createdPostDate;
     }
 
-    public LocalDateTime getChangedPostDate() {
+    public Date getChangedPostDate() {
         return changedPostDate;
     }
 
-    public void setChangedPostDate(LocalDateTime changedPostDate) {
+    public void setChangedPostDate(Date changedPostDate) {
         this.changedPostDate = changedPostDate;
     }
 
-//    public Author getAuthor() {
-//        return author;
+//    public User getUser() {
+//        return user;
 //    }
 //
-//    public void setAuthor(Author author) {
-//        this.author = author;
+//    public void setUser(User user) {
+//        this.user = user;
 //    }
+
 
     @Override
     public String toString() {
@@ -114,6 +129,7 @@ public class Post {
                 ", anons='" + anons + '\'' +
                 ", fullText='" + fullText + '\'' +
                 ", views=" + views +
+                ", size" + comments.size() +
                 '}';
     }
 }
