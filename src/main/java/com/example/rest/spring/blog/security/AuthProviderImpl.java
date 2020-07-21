@@ -1,7 +1,9 @@
 package com.example.rest.spring.blog.security;
 
+import com.example.rest.spring.blog.models.AuthorizedUser;
 import com.example.rest.spring.blog.models.User;
-import com.example.rest.spring.blog.service.user.UserServiceImpl;
+import com.example.rest.spring.blog.repositories.AuthorizedUserRepository;
+import com.example.rest.spring.blog.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -20,34 +22,35 @@ import java.util.List;
 
 @Component
 public class AuthProviderImpl implements AuthenticationProvider {
-    @Autowired
-    private UserServiceImpl userService;
 
     @Autowired
+    private UserService userService;
+    @Autowired
+    private AuthorizedUserRepository authRepository;
+    @Autowired
     private PasswordEncoder passwordEncoder;
+
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String email = authentication.getName();
         User user = this.userService.findByEmailIgnoreCase(email);
-        if (!checkEmailUser(user, email)) {
-            System.out.println("Пользователь не найден");
-            throw  new UsernameNotFoundException("Пользователь не найден");
-        }
-        String password = authentication.getCredentials().toString();
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            System.out.println("Не верный пароль");
-            throw new BadCredentialsException("Не верный пароль");
-        }
+        checkEmail(user, email);
+        checkPassword(this.authRepository.findById(user.getId()).get(), authentication.getCredentials().toString());
+
         List<GrantedAuthority> authorities = new ArrayList<>();
         return new UsernamePasswordAuthenticationToken(user, null, authorities);
     }
 
-    private boolean checkEmailUser(User user, String email){
-        if (user != null && user.getEmail().equalsIgnoreCase(email))
-            return true;
-        else
-            return false;
+    private void checkEmail(User user, String email){
+        if (user == null || !user.getEmail().equalsIgnoreCase(email)){
+            throw  new UsernameNotFoundException("Пользователь не найден");
+        }
+    }
+    private void checkPassword( AuthorizedUser authUser, String password){
+        if (!this.passwordEncoder.matches(password, authUser.getPassword())) {
+            throw new BadCredentialsException("Не верный пароль");
+        }
     }
 
     @Override

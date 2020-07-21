@@ -3,7 +3,6 @@ package com.example.rest.spring.blog.models;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 
 import java.util.Date;
 import java.util.List;
@@ -21,10 +20,6 @@ public class User {
     @Column(name = "email", nullable = false)
     private String email;
 
-    @NotBlank()
-    @Column(name = "password", nullable = false)
-    private String password;
-
     @Column(name = "first_name", length = 25)
     private String firstName;
 
@@ -34,22 +29,23 @@ public class User {
     @Column(name = "middle_name", length = 25)
     private String middleName;
 
-    @Column(name = "Date_registration", nullable = false)
-    private Date dateRegistration;
-
+    @Temporal(TemporalType.DATE)
     @Column(name = "birthday")
     private Date birthday;
 
-//    @OneToMany(mappedBy = "user",  orphanRemoval = true)
-//    private List<Post> posts;
-//
-//    public List<Post> getPosts() {
-//        return posts;
-//    }
-//
-//    public void setPosts(List<Post> posts) {
-//        this.posts = posts;
-//    }
+    @Column(name = "Date_registration", nullable = false)
+    private Date dateRegistration;
+
+    @OneToMany(mappedBy = "user",  orphanRemoval = true)
+    private List<Post> posts;
+
+    public List<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
+    }
 
     public Date getBirthday() {
         return birthday;
@@ -65,22 +61,6 @@ public class User {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getFirstName() {
@@ -107,6 +87,14 @@ public class User {
         this.middleName = middleName;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public Date getDateRegistration() {
         return dateRegistration;
     }
@@ -115,31 +103,16 @@ public class User {
         this.dateRegistration = dateRegistration;
     }
 
-    public String fullName(){
-        String fullName;
-        String surname = this.surname != null ? this.surname : null;
-        if (surname != null){
-            String name  = this.firstName != null ? this.firstName.substring(0,1).toUpperCase() + "." : "";
-            String middleName  = this.middleName != null ? this.middleName.substring(0,1).toUpperCase() +"." : "";
-            fullName = surname + name + middleName;
-        }
-        else{
-            fullName = this.email.substring(0, email.indexOf("@") );
-        }
-        return fullName;
-    }
-
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
                 ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", surname='" + surname + '\'' +
                 ", middleName='" + middleName + '\'' +
-                ", dateRegistration=" + dateRegistration +
                 ", birthday=" + birthday +
+                ", date registration=" + dateRegistration +
                 '}';
     }
 }

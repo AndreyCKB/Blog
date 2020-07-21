@@ -15,9 +15,4 @@ public interface UserRepository extends CrudRepository<User, Long>, JpaRepositor
     @Query("UPDATE User u SET u.email = ?1 WHERE u.id = ?2")
     void updateEmail(String newEmail, long id);
 
-    @Modifying
-    @Query("UPDATE User u SET u.password = ?1 WHERE u.id = ?2")
-    int updatePassword(String newPassword, long id);
-
-
 }

@@ -2,6 +2,7 @@ package com.example.rest.spring.blog.controller;
 
 import com.example.rest.spring.blog.exception.ErrorMessageForUserException;
 import com.example.rest.spring.blog.models.User;
+import com.example.rest.spring.blog.models.wrapper.entitys.HtmlUser;
 import com.example.rest.spring.blog.service.user.UserService;
 import com.example.rest.spring.blog.util.DateConverter;
 
@@ -27,40 +28,57 @@ public class UserController {
 
     }
 
+//    @GetMapping("/profile")
+//    public String profile(Model model) {
+//        addUserInModel( model, this.userService.getAuthUser() );
+//        return "users/profile";
+//    }
+//
+//    @PostMapping("/profile")
+//    public String changeProfile(@ModelAttribute("user") User user,
+//                                @RequestParam(name = "birthday_str", required = false) String birthday,
+//                                Model model) {
+//        user.setBirthday( this.dateConverter.stringInFormat_yyyy_MM_dd_toDate(birthday) );
+//        User savedUser =  this.userService.updateUser(user);
+//        this.addUserInModel(model, savedUser);
+//        return "users/profile";
+//    }
+
     @GetMapping("/profile")
-    public String profile(Authentication auth, Model model) {
-        User user = (User) auth.getPrincipal();
-        addUserInModel( model, this.userService.findById(user.getId()).get() );
+    public String profile(Model model, HtmlUser htmlUser) {
+        htmlUser = htmlUser.setUser(this.userService.getAuthUser());
+        System.out.println(htmlUser);
+        model.addAttribute( "userHtml", htmlUser.setUser(this.userService.getAuthUser()));
         return "users/profile";
     }
 
     @PostMapping("/profile")
-    public String changeProfile(@ModelAttribute("user") User user,
-                                @RequestParam(name = "birthday_str", required = false) String birthday,
+    public String changeProfile(@ModelAttribute("userHtml") HtmlUser htmlUser,
+//                                @RequestParam(name = "birthday_str", required = false) String birthday,
                                 Model model) {
-        user.setBirthday( this.dateConverter.stringInFormat_yyyy_MM_dd_toDate(birthday) );
-        User savedUser =  this.userService.save(user);
-        this.addUserInModel(model, savedUser);
-        return "users/profile";
+            System.out.println(htmlUser);
+//        user.setBirthday( this.dateConverter.stringInFormat_yyyy_MM_dd_toDate(birthday) );
+//        User savedUser =  this.userService.updateUser(user);
+//        this.addUserInModel(model, savedUser);
+//        return "users/profile";
+        return "redirect:/post/list_posts";
     }
 
     @GetMapping("/change-email")
-    public String changeEmailPage(Authentication auth, Model model) {
-        System.out.println(auth.getPrincipal());
-        model.addAttribute("user", auth.getPrincipal());
+    public String changeEmailPage(Model model) {
+        model.addAttribute("email", this.userService.getAuthUser().getEmail());
         return "users/change-email";
     }
 
     @PostMapping("/change-email")
     public String changeEmail(@RequestParam(name = "new_email", required = true) String newEmail,
                               @RequestParam(name = "password", required = true) String password,
-                              Authentication auth,
                               Model model) {
-        model.addAttribute("user", auth.getPrincipal());
         try {
-            this.userService.changeEmail((User) auth.getPrincipal(), newEmail, password);
+            this.userService.changeEmail(newEmail, password);
         } catch (ErrorMessageForUserException e) {
             e.printStackTrace();
+            model.addAttribute("email", this.userService.getAuthUser().getEmail());
             model.addAttribute("errorMessage", e.getMessage());
             return "users/change-email";
         }
@@ -68,26 +86,25 @@ public class UserController {
     }
 
     @GetMapping("/change-password")
-    public String changePasswordPage(Authentication auth, Model model) {
-        model.addAttribute("user", auth.getPrincipal());
+    public String changePasswordPage(Model model) {
+        model.addAttribute("email", this.userService.getAuthUser().getEmail());
         return "users/change-password";
     }
 
     @PostMapping("/change-password")
     public String changePassword(@RequestParam(name = "password", required = true) String currentPassword,
                                  @RequestParam(name = "new_password", required = true) String newPassword,
-                                 @RequestParam(name = "check_password", required = true) String checkPassword,
-                                 Authentication auth,
+                                 @RequestParam(name = "password_confirmation", required = true) String passwordConfirmation,
                                  Model model) {
-        model.addAttribute("user", auth.getPrincipal());
-        if ( !newPassword.equals(checkPassword) ) {
+        if ( !newPassword.equals(passwordConfirmation) ) {
             model.addAttribute("errorMessage", "Подтверждения нового пароля и новый пароль не совпадают");
             return "users/change-password";
             }
         try {
-            this.userService.changePassword((User) auth.getPrincipal(),currentPassword, newPassword);
+            this.userService.changePassword(currentPassword, newPassword);
         } catch (Exception e) {
             e.printStackTrace();
+            model.addAttribute("email", this.userService.getAuthUser().getEmail());
             model.addAttribute("errorMessage", e.getMessage());
             return "users/change-password";
         }
@@ -96,7 +113,7 @@ public class UserController {
 
     private void addUserInModel(Model model, User user){
         model.addAttribute("user", user);
-        model.addAttribute("birthday" , dateConverter.dateToStringInFormat_yyyy_MM_dd(user.getBirthday()));
+        model.addAttribute("birthday" ,this.dateConverter.dateToStringMonthInWords(user.getBirthday()));
     }
 
 

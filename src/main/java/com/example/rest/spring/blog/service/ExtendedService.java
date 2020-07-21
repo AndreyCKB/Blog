@@ -10,9 +10,9 @@ public interface ExtendedService<T, ID> extends SimpleService<T, ID> {
 
     <S extends T> Iterable<S> saveAll(Iterable<S> var);
 
-    boolean existsById(ID var);
+    boolean existsById(ID id);
 
-    Iterable<T> findAllById(Iterable<ID> var);
+    Iterable<T> findAllById(Iterable<ID> ids);
 
     long count();
 

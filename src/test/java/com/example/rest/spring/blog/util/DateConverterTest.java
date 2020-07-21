@@ -34,10 +34,10 @@ class DateConverterTest {
         assertEquals(date, this.dateConverter.stringInFormat_yyyy_MM_dd_toDate(str));
     }
 
-    @Test
-    void dateToStringInFormat_yyyy_MM_ddTest() {
-        Date date = new Date();
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        assertEquals(df.format(date), this.dateConverter.dateToStringInFormat_yyyy_MM_dd(date));
-    }
+//    @Test
+//    void dateToStringInFormat_yyyy_MM_ddTest() {
+//        Date date = new Date();
+//        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+//        assertEquals(df.format(date), this.dateConverter.dateToStringInFormat_yyyy_MM_dd(date));
+//    }
 }

@@ -12,7 +12,7 @@
     <header th:insert="blocks/header :: header"></header>
 
         <div class="container mt-5">
-            <div th:object="${user}" class="alert alert-info mt 2">
+            <div th:object="${userHtml}" class="alert alert-info mt 2">
 
                 <label>  Ваш email: </strong>
                     <strong style="color:black" th:text="*{email}"></strong>
@@ -37,7 +37,7 @@
 
                     <label style="color:black"> День рождения
                         <span th:if="${birthday} == null">
-                        <input type="date" name="birthday_str" th:value="${birthday}" class="form-control" >
+                        <input type="date" name="birthday" th:value="${birthday}" class="form-control" >
                         </span>
                         <span th:if="${birthday} != null" th:text="': ' + ${birthday}" >
                         </span>

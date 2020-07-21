@@ -45,8 +45,8 @@ public class Post {
     @OneToMany(mappedBy = "post",  orphanRemoval = true)
     private List<Comment> comments;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
 
     public List<Comment> getComments() {
         return comments;
@@ -112,13 +112,13 @@ public class Post {
         this.changedPostDate = changedPostDate;
     }
 
-//    public User getUser() {
-//        return user;
-//    }
-//
-//    public void setUser(User user) {
-//        this.user = user;
-//    }
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
 
     @Override
