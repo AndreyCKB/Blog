@@ -20,10 +20,11 @@ public class PostController {
     public PostController(PostService postService) {
         this.postService = postService;
     }
-    //    find_post
+
+
     @GetMapping("/list_posts")
-    public String blog(Model model) {
-        Iterable<Post> posts = this.postService.findAllAndSortByParameter(0, ParameterSort.TITLE.getSort());
+    public String listPosts(Model model) {
+        Iterable<Post> posts = this.postService.findAllAndSortByParameter(0, ParameterSort.ANONS.name());
         String errorMessage = null;
         if ( ((Page<Post>) posts).getTotalElements() == 0 ) {
             errorMessage = "База постов пуста.";
@@ -33,8 +34,8 @@ public class PostController {
     }
 
     @PostMapping("/list_posts")
-    public String blogWithSort(@RequestParam(name = "parameterSort",required = false) String parametrSort,Model model) {
-        Iterable<Post> posts = this.postService.findAllAndSortByParameter(0, ParameterSort.valueOf(parametrSort).getSort());
+    public String blogWithSort(@RequestParam(name = "parameterSort",required = false) String parameterSort,Model model) {
+        Iterable<Post> posts = this.postService.findAllAndSortByParameter(0, parameterSort);
         String errorMessage = null;
         if ( ((Page<Post>) posts).getTotalElements() == 0 ) {
             errorMessage = "База постов пуста.";

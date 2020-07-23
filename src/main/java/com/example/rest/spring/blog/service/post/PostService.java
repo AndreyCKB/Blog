@@ -16,7 +16,7 @@ public interface PostService extends ExtendedService<Post, Long> {
 
     Iterable<Post> findByKeyword(String keyword);
 
-    Page findAllAndSortByParameter(int page, Sort parameterSort) throws ErrorMessageForUserException;
+    Page findAllAndSortByParameter(int page, String parameterSort) throws ErrorMessageForUserException;
 
     void addCommentToPost(Comment comment, long postId) throws ErrorMessageForUserException;
 }

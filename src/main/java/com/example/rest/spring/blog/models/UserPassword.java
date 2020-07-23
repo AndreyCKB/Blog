@@ -1,29 +1,26 @@
 package com.example.rest.spring.blog.models;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
 @Entity
-@Table(name = "auth_user")
-public class AuthorizedUser {
+@Table(name = "password_user")
+public class UserPassword {
 
     @Id
-    @Column(name = "auth_id")
-    private long authId;
+    @Column(name = "password_id")
+    private long passwordId;
 
     @NotBlank()
     @Column(name = "password", nullable = false)
     private String password;
 
-    public long getAuthId() {
-        return authId;
+    public long getPasswordId() {
+        return passwordId;
     }
 
-    public void setAuthId(long authId) {
-        this.authId = authId;
+    public void setPasswordId(long passwordId) {
+        this.passwordId = passwordId;
     }
 
     public String getPassword() {
@@ -37,7 +34,7 @@ public class AuthorizedUser {
     @Override
     public String toString() {
         return "AuthorizedUser{" +
-                "authId=" + authId +
+                "authId=" + passwordId +
                 ", password='" + password + '\'' +
                 '}';
     }

@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Добовление темы</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+</head>
+
+<body>
+
+    <!--Вставляет блок из файла header.html с классом header -->
+    <header th:insert="blocks/header :: header"></header>
+
+        <!--mt- отступ сверху mb-отступ снизу-->
+        <div class="container mt-5 mb-5" >
+            <h1>Блог сайта</h1>
+            <form action="/topic/add" method="post">
+                <input type="text" name="name" placeholder="Введите название темы" class="form-control"><br>
+                <button type="submit" class="btn btn-success">Добавить тему</button>
+            </form>
+        </div>
+
+        <div th:insert="blocks/footer :: footer"></div>
+
+    </body>
+
+</html>

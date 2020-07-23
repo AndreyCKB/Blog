@@ -19,12 +19,14 @@ public class Post {
     @Column(name = "post_id")
     private long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Topic topic;
+
     @Column(name="title", unique = true, length = 100)
     private String title;
 
     @Column(name="anons")
     private String anons;
-
 
     @Type(type = "text")
     @Column(name="full_text")
@@ -36,7 +38,6 @@ public class Post {
     @Temporal(TemporalType.DATE)
     @Column(name="created_Post_Date")
     private Date createdPostDate;
-
 
     @Temporal(TemporalType.DATE)
     @Column(name="changed_Post_Date")
@@ -63,6 +64,15 @@ public class Post {
     public void setId(long id) {
         this.id = id;
     }
+
+    public Topic getTopic() {
+        return topic;
+    }
+
+    public void setTopic(Topic topic) {
+        this.topic = topic;
+    }
+
 
     public String getTitle() {
         return title;

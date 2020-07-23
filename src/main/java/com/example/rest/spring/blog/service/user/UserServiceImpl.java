@@ -2,9 +2,8 @@ package com.example.rest.spring.blog.service.user;
 
 
 import com.example.rest.spring.blog.exception.ErrorMessageForUserException;
-import com.example.rest.spring.blog.models.AuthorizedUser;
 import com.example.rest.spring.blog.models.User;
-import com.example.rest.spring.blog.repositories.AuthorizedUserRepository;
+import com.example.rest.spring.blog.repositories.PasswordRepository;
 import com.example.rest.spring.blog.repositories.UserRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,24 +19,21 @@ public class UserServiceImpl implements UserService{
 
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
-    private AuthorizedUserRepository authRepository;
+//    private AuthorizedUserRepository authRepository;
+    private PasswordRepository passwordRepository;
 
-    public UserServiceImpl(PasswordEncoder passwordEncoder, AuthorizedUserRepository authRepository, UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, PasswordRepository passwordRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.authRepository = authRepository;
+        this.passwordRepository = passwordRepository;
     }
 
     @Override
-    public User getAuthUser(){
-        return this.userRepository.findById(getPrincipalId()).get();
-    }
-
-    private User getPrincipal(){
+    public User getPrincipal(){
         return  (User) SecurityContextHolder
                 .getContext()
                 .getAuthentication()
-                .getPrincipal();
+                .getPrincipal();//
     }
 
     private long getPrincipalId(){
@@ -45,11 +41,22 @@ public class UserServiceImpl implements UserService{
     }
 
     private String getPrincipalPassword(){
-        return this.authRepository
+        return this.passwordRepository
                 .findById(getPrincipalId())
-                .get()
                 .getPassword();
     }
+
+
+    private User updatePrincipal(User user)  {
+        User principal = getPrincipal();
+        principal.setFirstName(user.getFirstName());
+        principal.setMiddleName(user.getMiddleName());
+        principal.setSurname(user.getSurname());
+        principal.setBirthday(user.getBirthday());
+        principal.setPosts(user.getPosts());
+        return principal;
+    }
+
 
     @Override
     public void registration(User user, String password) {
@@ -77,15 +84,15 @@ public class UserServiceImpl implements UserService{
         user.setDateRegistration( new Date() );
         User savedUser = this.userRepository.save(user);
         if (savedUser != null) {
-            AuthorizedUser authUser = new AuthorizedUser();
-            authUser.setAuthId(savedUser.getId());
-            authUser.setPassword(this.passwordEncoder.encode(password));
-            this.authRepository.save(authUser);
+            this.passwordRepository.createPassword(this.passwordEncoder.encode(password), savedUser.getId());
         }
     }
 
+
+
     @Override
     public <S extends User> S updateUser(S user){
+        System.out.println("!!!!!" + user);
         if (user == null || user.getEmail().isEmpty())
         {
             throw new ErrorMessageForUserException("Email не может быть пустым");
@@ -99,6 +106,10 @@ public class UserServiceImpl implements UserService{
         userExist.setSurname(user.getSurname());
         if ( userExist.getBirthday() == null )
             userExist.setBirthday(user.getBirthday());
+        User saveUser = this.userRepository.save(userExist);
+        if (saveUser == null)
+            throw new RuntimeException("Error while updating user");
+        updatePrincipal(saveUser);
         return (S) userExist;
     }
 
@@ -107,14 +118,14 @@ public class UserServiceImpl implements UserService{
         checkNewPassword(newPassword);
         checkCurrentPassword(currentPassword);
         newPassword = this.passwordEncoder.encode(newPassword);
-        int isUpdate = this.authRepository.updatePassword(newPassword, getPrincipalId());
+        int isUpdate = updatePassword(newPassword, getPrincipalId());
         if (isUpdate != 1) {
             throw new ErrorMessageForUserException("Произошла ошибка пароль не был изменён");
         }
     }
 
     private int updatePassword(String newPassword, long id) {
-        return this.authRepository.updatePassword(newPassword, id);
+        return this.passwordRepository.updatePassword(newPassword, id);
     }
 
     private void checkNewPassword(String newPassword){

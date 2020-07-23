@@ -13,20 +13,9 @@ import java.util.List;
 @Component
 @Scope("prototype")
 public class HtmlUser {
-//    @Autowired
     private DateConverter dateConverter = new DateConverter();
-//    @Autowired
+
     private User user = new User();
-
-
-    public String getBirthday() {
-        return this.dateConverter.dateToStringMonthInWords(this.user.getBirthday());
-    }
-
-    public HtmlUser setBirthday(String birthday) {
-        this.user.setBirthday(this.dateConverter.stringInFormat_yyyy_MM_dd_toDate(birthday));
-        return this;
-    }
 
     public long getId() {
         return this.user.getId();
@@ -34,6 +23,15 @@ public class HtmlUser {
 
     public HtmlUser setId(long id) {
         this.user.setId(id);
+        return this;
+    }
+
+    public String getEmail() {
+        return this.user.getEmail();
+    }
+
+    public HtmlUser setEmail(String email) {
+        this.user.setEmail(email);
         return this;
     }
 
@@ -64,18 +62,18 @@ public class HtmlUser {
         return this;
     }
 
-    public String getEmail() {
-        return this.user.getEmail();
+    public String getBirthday() {
+        return this.dateConverter.dateToStringMonthInWords(this.user.getBirthday());
     }
 
-    public HtmlUser setEmail(String email) {
-        this.user.setEmail(email);
+    public HtmlUser setBirthday(String birthday) {
+        this.user.setBirthday(this.dateConverter.stringInFormat_yyyy_MM_dd_toDate(birthday));
         return this;
     }
 
     public String getDateRegistration() {
 //        return this.user.getDateRegistration().toString();
-        return this.dateConverter.dateToStringMonthInWords(this.user.getDateRegistration());
+        return this.dateConverter.dateAndTimeToString(this.user.getDateRegistration());
     }
 
     public HtmlUser setDateRegistration(String dateRegistration) {
@@ -84,20 +82,8 @@ public class HtmlUser {
         return this;
     }
 
-    public User getUser(){
-        return this.user;
-    }
-    @Autowired
-    public HtmlUser setDateConverter(DateConverter dateConverter) {
-        this.dateConverter = dateConverter;
-      return this;
-    }
 
-    @Autowired
-    public HtmlUser setUser(User user) {
-        this.user = user;
-        return this;
-    }
+
     public List<Post> getPosts() {
         return this.user.getPosts();
     }
@@ -106,6 +92,23 @@ public class HtmlUser {
         this.user.setPosts(posts);
         return this;
     }
+
+    public User getUser(){
+        return this.user;
+    }
+
+    @Autowired
+    public HtmlUser setDateConverter(DateConverter dateConverter) {
+        this.dateConverter = dateConverter;
+        return this;
+    }
+
+    @Autowired
+    public HtmlUser setUser(User user) {
+        this.user = user;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "HtmlUser{" +

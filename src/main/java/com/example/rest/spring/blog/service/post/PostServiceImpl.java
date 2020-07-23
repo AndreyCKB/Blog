@@ -17,8 +17,8 @@ import java.util.Optional;
 public class PostServiceImpl implements  PostService {
 
     private PostRepository postRepository;
-
     private CommentRepository commentRepository;
+
 
     public PostServiceImpl(PostRepository postRepository, CommentRepository commentRepository) {
         this.postRepository = postRepository;
@@ -40,11 +40,18 @@ public class PostServiceImpl implements  PostService {
         return this.postRepository.existsById(id);
     }
 
+//    @Override
+//    public Page findAllAndSortByParameter(int page, Sort parameterSort) throws ErrorMessageForUserException {
+//        Pageable rageable = PageRequest.of(page, 10, parameterSort);
+//        Page pagePosts = this.postRepository.findAll(rageable);
+//        checkParameter(pagePosts);
+//        return pagePosts;
+//    }
     @Override
-    public Page findAllAndSortByParameter(int page, Sort parameterSort) throws ErrorMessageForUserException {
-        Pageable rageable = PageRequest.of(page, 10, parameterSort);
+    public Page findAllAndSortByParameter(int page, String parameterSort) throws ErrorMessageForUserException {
+        Pageable rageable = PageRequest.of(page, 10, ParameterSort.valueOf(parameterSort).getSort());
         Page pagePosts = this.postRepository.findAll(rageable);
-        checkParameter(pagePosts);
+//        checkParameter(pagePosts);
         return pagePosts;
     }
 

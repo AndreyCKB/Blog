@@ -36,13 +36,13 @@ public enum ParameterSort {
 
 
 
-    private String parametrSort;
+    private String parameterSort;
     ParameterSort(String st) {
-        this.parametrSort = st;
+        this.parameterSort = st;
     }
 
-    public String getParametrSort() {
-        return parametrSort;
+    public String getParameterSort() {
+        return parameterSort;
     }
 
     public Sort getSort(){

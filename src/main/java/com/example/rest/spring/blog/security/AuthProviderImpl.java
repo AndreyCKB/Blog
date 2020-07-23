@@ -1,8 +1,8 @@
 package com.example.rest.spring.blog.security;
 
-import com.example.rest.spring.blog.models.AuthorizedUser;
+import com.example.rest.spring.blog.models.UserPassword;
 import com.example.rest.spring.blog.models.User;
-import com.example.rest.spring.blog.repositories.AuthorizedUserRepository;
+import com.example.rest.spring.blog.repositories.PasswordRepository;
 import com.example.rest.spring.blog.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -26,7 +26,7 @@ public class AuthProviderImpl implements AuthenticationProvider {
     @Autowired
     private UserService userService;
     @Autowired
-    private AuthorizedUserRepository authRepository;
+    private PasswordRepository passwordRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -36,7 +36,7 @@ public class AuthProviderImpl implements AuthenticationProvider {
         String email = authentication.getName();
         User user = this.userService.findByEmailIgnoreCase(email);
         checkEmail(user, email);
-        checkPassword(this.authRepository.findById(user.getId()).get(), authentication.getCredentials().toString());
+        checkPassword(this.passwordRepository.findById(user.getId()), authentication.getCredentials().toString());
 
         List<GrantedAuthority> authorities = new ArrayList<>();
         return new UsernamePasswordAuthenticationToken(user, null, authorities);
@@ -47,7 +47,7 @@ public class AuthProviderImpl implements AuthenticationProvider {
             throw  new UsernameNotFoundException("Пользователь не найден");
         }
     }
-    private void checkPassword( AuthorizedUser authUser, String password){
+    private void checkPassword(UserPassword authUser, String password){
         if (!this.passwordEncoder.matches(password, authUser.getPassword())) {
             throw new BadCredentialsException("Не верный пароль");
         }

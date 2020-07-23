@@ -48,11 +48,20 @@ public class DateConverter {
         return df.format(date);
     }
 
+    public  String dateAndTimeToString(Date date){
+        if (date == null) {
+            throw new ErrorMessageForUserException("Дата не введена");
+        }
+        DateFormat df = new SimpleDateFormat("dd MMMMM yyyy HH:mm");
+        return df.format(date);
+    }
+
     public  String dateToStringMonthInWords(Date date){
         if (date == null) {
             throw new ErrorMessageForUserException("Дата не введена");
         }
-        return  String.format("%1$td %1$tB %1$tY", date);
+        DateFormat df = new SimpleDateFormat("dd MMMMM yyyy");
+        return df.format(date);
     }
 
 //    public static void main(String... args){
