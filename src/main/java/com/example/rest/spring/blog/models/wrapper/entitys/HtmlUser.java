@@ -63,26 +63,21 @@ public class HtmlUser {
     }
 
     public String getBirthday() {
-        return this.dateConverter.dateToStringMonthInWords(this.user.getBirthday());
+        return this.user.getBirthday() != null ? this.dateConverter.dateToStringMonthInWords(this.user.getBirthday())
+                                               : null;
     }
 
     public HtmlUser setBirthday(String birthday) {
-        this.user.setBirthday(this.dateConverter.stringInFormat_yyyy_MM_dd_toDate(birthday));
+        if (birthday != null) {
+            this.user.setBirthday(this.dateConverter.stringInFormat_yyyy_MM_dd_toDate(birthday));
+        }
         return this;
     }
 
     public String getDateRegistration() {
-//        return this.user.getDateRegistration().toString();
-        return this.dateConverter.dateAndTimeToString(this.user.getDateRegistration());
+        return this.user.getDateRegistration() != null ? this.dateConverter.dateAndTimeToString(this.user.getDateRegistration())
+                                                       : null;
     }
-
-    public HtmlUser setDateRegistration(String dateRegistration) {
-//        this.user.setDateRegistration(this.dateConverter.stringInFormat_yyyy_MM_dd_toDate(dateRegistration));
-//        return this;
-        return this;
-    }
-
-
 
     public List<Post> getPosts() {
         return this.user.getPosts();

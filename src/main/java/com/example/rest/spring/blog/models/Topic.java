@@ -27,11 +27,13 @@ public class Topic {
     }
 
     public String getName() {
-        return name;
+        char[] chars = name.toCharArray();
+        chars[0] = Character.toUpperCase(chars[0]);
+        return String.valueOf(chars);
     }
 
     public void setName(String topicName) {
-        this.name = topicName;
+        this.name = topicName.toLowerCase();;
     }
 
     public List<Post> getPosts() {
@@ -42,12 +44,15 @@ public class Topic {
         this.posts = posts;
     }
 
+    public int getNumberPosts() {
+        return this.posts != null ? posts.size() : 0;
+    }
     @Override
     public String toString() {
         return "Topic{" +
                 "topicId=" + topicId +
-                ", topicName='" + name + '\'' +
-                ", posts size =" + (this.posts != null ? posts.size() : "null") +
+                ", topicName=" + name +
+                ", posts size =" + getNumberPosts() +
                 '}';
     }
 }

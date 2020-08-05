@@ -19,7 +19,7 @@ public class TopicServiceImpl implements TopicService {
 
     @Override
     public <S extends Topic> S save(S topic) {
-        boolean existsTopic = this.topicRepository.existsTopicByName(topic.getName());
+        boolean existsTopic = this.topicRepository.existsByNameIgnoreCase(topic.getName());
         if (existsTopic){
             return topic;
         } else {

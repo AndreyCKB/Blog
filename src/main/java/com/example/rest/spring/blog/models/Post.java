@@ -135,11 +135,15 @@ public class Post {
     public String toString() {
         return "Post{" +
                 "id=" + id +
+                ", topic=" + topic +
                 ", title='" + title + '\'' +
                 ", anons='" + anons + '\'' +
                 ", fullText='" + fullText + '\'' +
                 ", views=" + views +
-                ", size" + comments.size() +
+                ", createdPostDate=" + createdPostDate +
+                ", changedPostDate=" + changedPostDate +
+                ", comments size=" + (comments != null ? comments.size() : 0) +
+                ", user=" + user +
                 '}';
     }
 }

@@ -34,4 +34,9 @@ public class TopicController {
         return "redirect:/post/list_posts";
     }
 
+    @GetMapping("/get-topics")
+    public String getTopics(Model model) {
+        model.addAttribute("topics", this.topicService.findAll());
+        return "/topics/topic-list";
+    }
 }

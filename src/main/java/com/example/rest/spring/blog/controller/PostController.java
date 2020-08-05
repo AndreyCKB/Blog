@@ -4,6 +4,7 @@ import com.example.rest.spring.blog.models.Comment;
 import com.example.rest.spring.blog.models.Post;
 import com.example.rest.spring.blog.service.post.ParameterSort;
 import com.example.rest.spring.blog.service.post.PostService;
+import com.example.rest.spring.blog.service.topic.TopicService;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,11 +17,12 @@ import java.util.*;
 public class PostController {
 
     private PostService postService;
+    private TopicService topicService;
 
-    public PostController(PostService postService) {
+    public PostController(PostService postService, TopicService topicService) {
         this.postService = postService;
+        this.topicService = topicService;
     }
-
 
     @GetMapping("/list_posts")
     public String listPosts(Model model) {
@@ -63,11 +65,17 @@ public class PostController {
 
     @GetMapping("/add")
     public String addPostPage(Model model) {
+        model.addAttribute("topics", this.topicService.findAll());
         return "/posts/post-add";
     }
 
     @PostMapping("/add")
     public String addPost(@ModelAttribute("post")Post post, Model model) {
+        if (post.getTopic() == null ){
+            model.addAttribute("errorMessage", "Вы не выбрали тему для поста.");
+            model.addAttribute("post", post);
+            return "/posts/post-add";
+        }
         Date now = new Date();
         post.setCreatedPostDate(now);
         post.setChangedPostDate(now);

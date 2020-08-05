@@ -3,8 +3,10 @@ package com.example.rest.spring.blog.service.post;
 import com.example.rest.spring.blog.exception.ErrorMessageForUserException;
 import com.example.rest.spring.blog.models.Comment;
 import com.example.rest.spring.blog.models.Post;
+import com.example.rest.spring.blog.models.User;
 import com.example.rest.spring.blog.repositories.CommentRepository;
 import com.example.rest.spring.blog.repositories.PostRepository;
+import com.example.rest.spring.blog.service.user.UserService;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,15 +20,21 @@ public class PostServiceImpl implements  PostService {
 
     private PostRepository postRepository;
     private CommentRepository commentRepository;
+    private UserService userService;
 
-
-    public PostServiceImpl(PostRepository postRepository, CommentRepository commentRepository) {
+    public PostServiceImpl(PostRepository postRepository, CommentRepository commentRepository, UserService userService) {
         this.postRepository = postRepository;
         this.commentRepository = commentRepository;
+        this.userService = userService;
     }
 
     @Override
     public <S extends Post> S save(S post) {
+        User principal = this.userService.getPrincipal();
+        if (post.getUser() != null && post.getUser().getId() != principal.getId()) {
+            throw new ErrorMessageForUserException("Вы не являетесь владельцем данного поста и не можети его изменять");
+        }
+        if (post.getUser() == null) post.setUser(principal);
         return this.postRepository.save(post);
     }
 
