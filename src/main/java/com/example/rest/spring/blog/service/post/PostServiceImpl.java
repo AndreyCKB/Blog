@@ -31,11 +31,24 @@ public class PostServiceImpl implements  PostService {
     @Override
     public <S extends Post> S save(S post) {
         User principal = this.userService.getPrincipal();
+        if (post.getId() != 0) {
+            return updateAnonsAndFullText(principal, post);
+        }
+        if (post.getUser() == null) {
+            post.setUser(principal);
+        } else {
+            throw new ErrorMessageForUserException("Не зарегистрированные пользователи не могут публиковать посты");
+        }
+        post.setChangedPostDate(new Date());
+        return this.postRepository.save(post);
+    }
+
+    private <S extends Post> S updateAnonsAndFullText(User principal, Post post) {
         if (post.getUser() != null && post.getUser().getId() != principal.getId()) {
             throw new ErrorMessageForUserException("Вы не являетесь владельцем данного поста и не можети его изменять");
         }
-        if (post.getUser() == null) post.setUser(principal);
-        return this.postRepository.save(post);
+        this.postRepository.updateAnonsAndFullText(post.getId(),post.getAnons(),post.getFullText(),new Date());
+        return (S) findById(post.getId()).get();
     }
 
     @Override
@@ -123,10 +136,7 @@ public class PostServiceImpl implements  PostService {
         this.postRepository.deleteAll();
     }
 
-    @Override
-    public void updateAnonsAndFullText(long postID, String anons, String fullText) {
-        this.postRepository.updateAnonsAndFullText(postID,anons,fullText, new Date());
-    }
+
 
     @Override
     public void updateViews(long postID, int views) {

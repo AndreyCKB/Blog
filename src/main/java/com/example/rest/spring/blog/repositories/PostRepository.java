@@ -34,6 +34,6 @@ public interface PostRepository extends CrudRepository<Post, Long>, PagingAndSor
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Post p SET p.anons = :anons, p.fullText = :fullText, p.changedPostDate = :changedPostDate WHERE p.id = :postID")
     void updateAnonsAndFullText(@Param("postID") long postID, @Param("anons")  String anons,
-                                @Param("fullText")  String fullText, @Param("changedPostDate")Date changeDate);
+                                @Param("fullText")  String fullText, @Param("changedPostDate") Date changeDate);
 
 }

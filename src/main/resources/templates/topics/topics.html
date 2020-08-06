@@ -1,0 +1,23 @@
+<div th:fragment="topics">
+    <div class="container mt-5 mb-5" >
+        <h3 align="center">Темы постов</h3>
+            <table class="table table-hover" >
+                <thead>
+                    <tr style="background: #D9FFAD">
+                        <th scope="col">Id</th>
+                        <th scope="col">Название темы</th>
+                        <th scope="col">Количество постов<br> в данной теме</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <div th:each="topic : ${topics}">
+                        <tr>
+                            <td th:text="${topic.topicId}"  scope="row"></td>
+                            <td th:text="${topic.name}"></td>
+                            <td th:text="${topic.numberPosts}"></td>
+                        </tr>
+                    </div>
+                </tbody>
+            </table>
+    </div>
+</div>

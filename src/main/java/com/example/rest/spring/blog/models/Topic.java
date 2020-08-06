@@ -27,12 +27,18 @@ public class Topic {
     }
 
     public String getName() {
+        if (this.name == null || this.name.isEmpty()){
+            return "";
+        }
         char[] chars = name.toCharArray();
         chars[0] = Character.toUpperCase(chars[0]);
         return String.valueOf(chars);
     }
 
     public void setName(String topicName) {
+        if (topicName == null || topicName.isEmpty()){
+            return;
+        }
         this.name = topicName.toLowerCase();;
     }
 

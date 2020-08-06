@@ -1,5 +1,6 @@
 package com.example.rest.spring.blog.service.topic;
 
+import com.example.rest.spring.blog.exception.ErrorMessageForUserException;
 import com.example.rest.spring.blog.models.Topic;
 import com.example.rest.spring.blog.repositories.TopicRepository;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,7 @@ public class TopicServiceImpl implements TopicService {
     public <S extends Topic> S save(S topic) {
         boolean existsTopic = this.topicRepository.existsByNameIgnoreCase(topic.getName());
         if (existsTopic){
-            return topic;
+            throw new ErrorMessageForUserException("Такая тема уже есть :\"" + topic.getName() + "\"");
         } else {
             return this.topicRepository.save(topic);
         }

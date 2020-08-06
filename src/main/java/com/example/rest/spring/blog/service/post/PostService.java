@@ -10,7 +10,7 @@ import org.springframework.data.domain.Sort;
 
 public interface PostService extends ExtendedService<Post, Long> {
 
-    void updateAnonsAndFullText(long postID, String anons, String fullText);
+//    void updateAnonsAndFullText(long postID, String anons, String fullText);
 
     void updateViews(long postID, int views);
 

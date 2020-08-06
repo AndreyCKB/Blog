@@ -13,8 +13,6 @@
     <!--Вставляет блок из файла header.html с классом header -->
     <header th:insert="blocks/header :: header"></header>
 
-    <a th:href="'/topic/add'" class="btm btm-warning">Добавить новую тему</a>
-
     <!--mt- отступ сверху mb-отступ снизу-->
     <div class="container mt-5 mb-5" >
         <h2 align="center">Создание поста</h2>
@@ -22,14 +20,16 @@
             <p style="color:red" th:text="${errorMessage}"></p>
         </span>
         <form action="/post/add" method="post">
-                <select name="topic" class="custom-select mr-sm-2">
+                <select name="topic" class="custom-select mr-sm-2" style="width: auto">
                     <option selected value="0">Выберите тему статьй...</option>
                     <div th:each="topic : ${topics}" class="alert alert-info mt 2">
                         <option th:value="${topic.topicId}">
                             <span th:text="${topic.name}"/>
                         </option>
                     </div>
-                </select><br><br>
+                </select>
+                <a th:href="'/topic/page-add'" class="btm btm-warning"><strong>Добавить новую тему</strong></a>
+                <br><br>
                 <input type="text" name="title"  placeholder="Введите название статьй" class="form-control"><br>
                 <input type="text" name="anons" placeholder="Введите анонс статьй" class="form-control"><br>
                 <textarea name="fullText" placeholder="Введите текст статьй" class="form-control"></textarea><br>

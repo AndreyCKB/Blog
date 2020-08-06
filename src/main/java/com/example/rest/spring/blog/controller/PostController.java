@@ -73,12 +73,12 @@ public class PostController {
     public String addPost(@ModelAttribute("post")Post post, Model model) {
         if (post.getTopic() == null ){
             model.addAttribute("errorMessage", "Вы не выбрали тему для поста.");
+            model.addAttribute("topics", this.topicService.findAll());
             model.addAttribute("post", post);
             return "/posts/post-add";
         }
         Date now = new Date();
         post.setCreatedPostDate(now);
-        post.setChangedPostDate(now);
         this.postService.save(post);
         return "redirect:/post/list_posts";
     }
@@ -99,7 +99,7 @@ public class PostController {
 
     @PostMapping("/{id}/edit")
     public String editPost(@ModelAttribute("post")Post post) {
-        this.postService.updateAnonsAndFullText(post.getId(),post.getAnons(),post.getFullText());
+        this.postService.save(post);
         return "redirect:/post/list_posts";
     }
 

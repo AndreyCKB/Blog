@@ -15,14 +15,27 @@
 
         <!--mt- отступ сверху mb-отступ снизу-->
         <div class="container mt-5 mb-5" >
-            <h1>Блог сайта</h1>
+            <h2>Добавте новую тему</h2>
+            <span th:if="${errorMessage} != null">
+                <p style="color:red" th:text="${errorMessage}"></p>
+            </span>
             <form action="/topic/add" method="post">
                 <input type="text" name="name" pattern="^\S{2,}$" placeholder="Введите название темы" class="form-control"><br>
                 <button type="submit" class="btn btn-success">Добавить тему</button>
             </form>
-            <button onclick="location.href = '/topic/get-topics'" class="btn btn-primary">Показать спиок тем</button></nobr>
+            <br>
+            <div th:if="${topics == null}">
+                <button onclick="location.href = '/topic/get-topics'" class="btn btn-primary">Показать спиок тем</button>
+            </div>
+            <div th:if="${topics != null}">
+                <!--<a href="/topic/page-add">скрыть</a>-->
+                <button onclick="location.href = '/topic/page-add'" class="btn btn-primary">Скрыть спиок тем</button>
+            </div>
         </div>
 
+        <div th:if="${topics != null}">
+            <div th:insert="topics/topics :: topics">></div>
+        </div>
         <div th:insert="blocks/footer :: footer"></div>
 
     </body>
