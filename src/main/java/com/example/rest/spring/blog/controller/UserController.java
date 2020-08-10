@@ -15,11 +15,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/user")
 public class UserController {
 
-    final private DateConverter dateConverter;
     final private UserService userService;
 
-    public UserController(DateConverter dateConverter, UserService userService) {
-        this.dateConverter = dateConverter;
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 

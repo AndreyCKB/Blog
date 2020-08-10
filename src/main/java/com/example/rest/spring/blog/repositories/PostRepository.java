@@ -20,16 +20,14 @@ public interface PostRepository extends CrudRepository<Post, Long>, PagingAndSor
     @Override
     Page findAll(Pageable pageable);
 
-    @Modifying(clearAutomatically = true)
     @Query("FROM Post p WHERE p.anons LIKE '%' || :keyword  || '%'"
             + " OR p.title LIKE '%' || :keyword  || '%'"
             + " OR p.fullText LIKE '%' || :keyword  || '%'")
     Iterable<Post> findByKeyword( @Param("keyword")  String keyword);
 
-
     @Modifying(clearAutomatically = true)
-    @Query("UPDATE Post p SET p.views = :views WHERE p.id = :postID")
-    void updateViews(@Param("postID") long postID, @Param("views") int views);
+    @Query("UPDATE Post p SET p.views = p.views + 1 WHERE p.id = :postID")
+    void updateViews(@Param("postID") long postID);
 
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Post p SET p.anons = :anons, p.fullText = :fullText, p.changedPostDate = :changedPostDate WHERE p.id = :postID")

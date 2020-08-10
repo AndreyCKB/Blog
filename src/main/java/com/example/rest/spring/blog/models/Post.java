@@ -39,7 +39,7 @@ public class Post {
     @Column(name="created_Post_Date")
     private Date createdPostDate;
 
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name="changed_Post_Date")
     private Date changedPostDate;
 
@@ -48,14 +48,6 @@ public class Post {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
-
-    public List<Comment> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
-    }
 
     public long getId() {
         return id;
@@ -72,7 +64,6 @@ public class Post {
     public void setTopic(Topic topic) {
         this.topic = topic;
     }
-
 
     public String getTitle() {
         return title;
@@ -122,6 +113,18 @@ public class Post {
         this.changedPostDate = changedPostDate;
     }
 
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public int incrementViewsAndGet(){
+        return ++this.views;
+    }
+
     public User getUser() {
         return user;
     }
@@ -129,6 +132,7 @@ public class Post {
     public void setUser(User user) {
         this.user = user;
     }
+
 
 
     @Override

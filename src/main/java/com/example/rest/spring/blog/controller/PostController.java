@@ -2,6 +2,7 @@ package com.example.rest.spring.blog.controller;
 
 import com.example.rest.spring.blog.models.Comment;
 import com.example.rest.spring.blog.models.Post;
+import com.example.rest.spring.blog.models.wrapper.entitys.HtmlPost;
 import com.example.rest.spring.blog.service.post.ParameterSort;
 import com.example.rest.spring.blog.service.post.PostService;
 import com.example.rest.spring.blog.service.topic.TopicService;
@@ -25,18 +26,37 @@ public class PostController {
     }
 
     @GetMapping("/list_posts")
-    public String listPosts(Model model) {
-        Iterable<Post> posts = this.postService.findAllAndSortByParameter(0, ParameterSort.ANONS.name());
-        String errorMessage = null;
-        if ( ((Page<Post>) posts).getTotalElements() == 0 ) {
-            errorMessage = "База постов пуста.";
+    public String listPosts(@RequestParam(value = "page_number", required = false) Integer pageNumber,
+                             Model model) {
+        long countPosts = this.postService.count();
+        if (countPosts == 0) {
+            model.addAttribute("errorMessage", "База постов пуста.");
+            return "/posts/post-list";
         }
-        this.addPostsInModelForList(posts,model,errorMessage);
+        if (pageNumber == null){
+            pageNumber = 1;
+        }
+        Iterable<Post> posts = this.postService.findAllAndSortByParameter(--pageNumber, ParameterSort.ANONS.name());
+        long totalElements = ((Page<Post>) posts).getTotalElements();
+        if (totalElements == 0)
+            posts = this.postService.findAllAndSortByParameter(0, ParameterSort.ANONS.name());
+        model.addAttribute("pages", pages(countPosts));
+        this.addPostsInModelForList(posts,model,null);
         return "/posts/post-list";
     }
 
-    @PostMapping("/list_posts")
-    public String blogWithSort(@RequestParam(name = "parameterSort",required = false) String parameterSort,Model model) {
+    private int[] pages(long countPosts){
+        int countPages =(int) (countPosts % 3 == 0 ? (countPosts / 3) : (countPosts / 3 + 1));
+        int [] pages = new int [countPages];
+        for (int i = 0; i < countPages; i++ ){
+            pages[i] = i+1;
+        }
+        return pages;
+    }
+
+
+    @PostMapping("/list_posts/sort")
+    public String postsSort(@RequestParam(name = "parameterSort") String parameterSort,Model model) {
         Iterable<Post> posts = this.postService.findAllAndSortByParameter(0, parameterSort);
         String errorMessage = null;
         if ( ((Page<Post>) posts).getTotalElements() == 0 ) {
@@ -47,19 +67,19 @@ public class PostController {
     }
 
 
+
     //    несколько параметров указываются через / На пример ("/blog/{id}/{newParam}")
     @GetMapping("/{id}")
-    public String blogDetails(@PathVariable(value = "id") long id, Model model) {
-        Post post;
+    public String blogDetails(@PathVariable(value = "id") long postID, HtmlPost htmlPost, Model model) {
         try {
-            post = this.postService.findById(id).get();
-            this.postService.updateViews(post.getId(), post.getViews() + 1);
+            this.postService.updateViews(postID);
+            htmlPost.setPost(this.postService.findById(postID).get());
         }catch (Exception e){
             e.printStackTrace();
-            model.addAttribute("errorMessage", "В базе не найдено поста с таким id ( id = " + id);
+            model.addAttribute("errorMessage", "В базе не найдено поста с таким id ( id = " + postID);
             return "redirect:/post/list_posts";
         }
-        model.addAttribute("post", post);
+        model.addAttribute("post", htmlPost);
         return "/posts/post-details";
     }
 
@@ -77,8 +97,6 @@ public class PostController {
             model.addAttribute("post", post);
             return "/posts/post-add";
         }
-        Date now = new Date();
-        post.setCreatedPostDate(now);
         this.postService.save(post);
         return "redirect:/post/list_posts";
     }
@@ -87,8 +105,7 @@ public class PostController {
     @GetMapping("/{id}/edit")
     public String editPostPage(@PathVariable(value = "id") long id, Model model) {
         try {
-            Post post = this.postService.findById(id).get();
-            model.addAttribute("post", post);
+            model.addAttribute("post", this.postService.findById(id).get());
         }catch (RuntimeException e){
             e.printStackTrace();
             model.addAttribute("errorMessage", "В базе не найдено поста с таким id ( id = " + id);
@@ -134,20 +151,29 @@ public class PostController {
 
     @GetMapping("/{id}/all-comments")
     public String showComments(@PathVariable(value = "id") long id,
+                               @RequestParam(value = "enable_comments") boolean enableСomments,
+                               HtmlPost htmlPost,
                                Model model) {
-        Post post = this.postService.findById(id).get();
-        List<Comment> comments = post.getComments();
-        model.addAttribute("post",post);
-        model.addAttribute("comments", comments);
+        htmlPost.setPost(this.postService.findById(id).get());
+        model.addAttribute("post",htmlPost);
+        if (enableСomments){
+            model.addAttribute("comments", htmlPost.getComments());
+        }
         return "/posts/post-details";
     }
 
     @PostMapping("/{id}/add-comment")
     public String addComment(@PathVariable(value = "id") long id,
                              @ModelAttribute(name = "comment") Comment comment,
+                             HtmlPost htmlPost,
                              Model model) {
-        this.postService.addCommentToPost(comment, id);
-        return this.blogDetails(id, model);
+        if( comment == null || comment.getMessage() == null || comment.getMessage().isEmpty()){
+            model.addAttribute("errorMessage", "Ввы не ввели текст для комментария");
+            model.addAttribute("post",  htmlPost.setPost(this.postService.findById(id).get()));
+        }else {
+            model.addAttribute("post",  htmlPost.setPost(this.postService.addCommentToPost(comment, id)));
+        }
+        return "/posts/post-details";
     }
 
 }

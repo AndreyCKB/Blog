@@ -39,7 +39,13 @@ public class PostServiceImpl implements  PostService {
         } else {
             throw new ErrorMessageForUserException("Не зарегистрированные пользователи не могут публиковать посты");
         }
-        post.setChangedPostDate(new Date());
+        return saveNewPost(post);
+    }
+
+    private  <S extends Post> S saveNewPost(S post){
+        Date now = new Date();
+        post.setCreatedPostDate(now);
+        post.setChangedPostDate(now);
         return this.postRepository.save(post);
     }
 
@@ -61,40 +67,33 @@ public class PostServiceImpl implements  PostService {
         return this.postRepository.existsById(id);
     }
 
-//    @Override
-//    public Page findAllAndSortByParameter(int page, Sort parameterSort) throws ErrorMessageForUserException {
-//        Pageable rageable = PageRequest.of(page, 10, parameterSort);
-//        Page pagePosts = this.postRepository.findAll(rageable);
-//        checkParameter(pagePosts);
-//        return pagePosts;
-//    }
+
     @Override
-    public Page findAllAndSortByParameter(int page, String parameterSort) throws ErrorMessageForUserException {
-        Pageable rageable = PageRequest.of(page, 10, ParameterSort.valueOf(parameterSort).getSort());
+    public Page findAllAndSortByParameter(int page, String parameterSort) {
+        Pageable rageable = PageRequest.of(page, 3, ParameterSort.valueOf(parameterSort).getSort());
         Page pagePosts = this.postRepository.findAll(rageable);
-//        checkParameter(pagePosts);
         return pagePosts;
     }
 
     @Override
-    public void addCommentToPost(Comment comment, long postId) throws ErrorMessageForUserException {
+    public <S extends Post> S addCommentToPost(Comment comment, long postId){
         Post post = this.findById(postId).get();
         checkParameter(post);
-        comment.setPost(post);
+        comment.setUser(this.userService.getPrincipal());
         comment.setCreatedDate(new Date());
+        comment.setPost(post);
         Comment save = this.commentRepository.save(comment);
         post.getComments().add(save);
-        this.save(post);
+        return (S) post;
+
 
     }
 
     private void checkParameter(Post post) throws ErrorMessageForUserException {
-        if ( post == null ) throw new ErrorMessageForUserException("Пользователь не найден");
+        if ( post == null ) throw new ErrorMessageForUserException("Пост не найден");
     }
 
-    private void checkParameter(Page page) throws ErrorMessageForUserException {
-//        if ( page.getTotalElements() == 0 ) throw new ErrorMessageForUserException("Пользователи не найдены");
-    }
+
 
     @Override
     public Optional<Post> findById(Long id) {
@@ -136,11 +135,9 @@ public class PostServiceImpl implements  PostService {
         this.postRepository.deleteAll();
     }
 
-
-
     @Override
-    public void updateViews(long postID, int views) {
-        this.postRepository.updateViews(postID,views);
+    public void updateViews(long postID) {
+            this.postRepository.updateViews(postID);
     }
 
     @Override

@@ -1,13 +1,19 @@
 <div th:fragment="comments">
 
     <comments class="text-muted">
-
-        <a th:href="'/post/' + ${post.id} + '/all-comments'" class="btn btn-danger">Показать коментарии</a>
-
-        <div th:each="comment : ${comments}" class="alert alert-info mt 2">
-            <!--<h3 th:text="${comment.user.fullName()}"/>-->
-            <p th:text="${comment.message}"/>
+        <br>
+        <div th:if=" ${comments} == null">
+            <a th:href="'/post/' + ${post.id} + '/all-comments?enable_comments=true'" class="btn btn-danger">Показать коментарии</a>
         </div>
+        <div th:if=" ${comments} != null">
+            <a th:href="'/post/' + ${post.id} + '/all-comments?enable_comments=false'" class="btn btn-danger">Скрыть коментарии</a>
+            <h3>Всего коментариев : <span th:text="${comments.size()}"> </span></h3>
+            <div th:each="comment : ${comments}" class="alert alert-info mt 2">
+                <p th:text="${comment.user.fullName} + '(Дата создания: ' + ${comment.dateRegistrationToString()} + ')'"/>
+                <p th:text="${comment.message}"/>
+            </div>
+        </div>
+
 
     </comments>
 </div>

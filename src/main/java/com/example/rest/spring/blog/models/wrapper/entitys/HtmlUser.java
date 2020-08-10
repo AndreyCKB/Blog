@@ -13,7 +13,7 @@ import java.util.List;
 @Component
 @Scope("prototype")
 public class HtmlUser {
-    private DateConverter dateConverter = new DateConverter();
+
 
     private User user = new User();
 
@@ -63,19 +63,19 @@ public class HtmlUser {
     }
 
     public String getBirthday() {
-        return this.user.getBirthday() != null ? this.dateConverter.dateToStringMonthInWords(this.user.getBirthday())
+        return this.user.getBirthday() != null ? DateConverter.dateToStringMonthInWords(this.user.getBirthday())
                                                : null;
     }
 
     public HtmlUser setBirthday(String birthday) {
         if (birthday != null) {
-            this.user.setBirthday(this.dateConverter.stringInFormat_yyyy_MM_dd_toDate(birthday));
+            this.user.setBirthday(DateConverter.stringInFormat_yyyy_MM_dd_toDate(birthday));
         }
         return this;
     }
 
     public String getDateRegistration() {
-        return this.user.getDateRegistration() != null ? this.dateConverter.dateAndTimeToString(this.user.getDateRegistration())
+        return this.user.getDateRegistration() != null ? DateConverter.dateAndTimeToString(this.user.getDateRegistration())
                                                        : null;
     }
 
@@ -88,14 +88,12 @@ public class HtmlUser {
         return this;
     }
 
-    public User getUser(){
-        return this.user;
+    public String getFullName(){
+        return this.user.getFullName();
     }
 
-    @Autowired
-    public HtmlUser setDateConverter(DateConverter dateConverter) {
-        this.dateConverter = dateConverter;
-        return this;
+    public User getUser(){
+        return this.user;
     }
 
     @Autowired

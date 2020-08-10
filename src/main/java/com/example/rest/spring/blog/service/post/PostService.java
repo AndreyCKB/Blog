@@ -12,11 +12,11 @@ public interface PostService extends ExtendedService<Post, Long> {
 
 //    void updateAnonsAndFullText(long postID, String anons, String fullText);
 
-    void updateViews(long postID, int views);
+    void updateViews(long postID);
 
     Iterable<Post> findByKeyword(String keyword);
 
     Page findAllAndSortByParameter(int page, String parameterSort) throws ErrorMessageForUserException;
 
-    void addCommentToPost(Comment comment, long postId) throws ErrorMessageForUserException;
+    <S extends Post> S addCommentToPost(Comment comment, long postId) throws ErrorMessageForUserException;
 }

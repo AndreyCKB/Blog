@@ -10,36 +10,35 @@
 
     <body>
 
-    <!--Вставляет блок из файла header.html с классом header -->
-    <header th:insert="blocks/header :: header"></header>
+        <!--Вставляет блок из файла header.html с классом header -->
+        <header th:insert="blocks/header :: header"></header>
 
-    <div class="container mt-5">
-        <h1>Блог сайта</h1>
-        <div  class="alert alert-info mt 2">
-            <h3 th:text="${post.title}"/>
-            <p th:text="${post.anons}"/>
-            <p th:text="${post.fullText}"/>
-            <p> <b>Просмотров: </b> <span th:text="${post.views}"/> </p>
-            <p> <b>Дата создания поста: </b> <span th:text="${post.createdPostDate}"/> </p>
-            <p> <b>Дата пследнего редактирования поста: </b> <span th:text="${post.changedPostDate}"/> </p>
-            <a th:href="'/post/' + ${post.id} + '/edit'" class="btn btn-warning">Редактировать</a>
-            <a th:href="'/post/' + ${post.id} + '/delete'" class="btn btn-danger">Удалить</a>
+        <div class="container mt-5">
+            <div  class="alert alert-info mt 2">
+                <p align="center" th:text="'Тема: ' + ${post.topic.name}"/>
+                <h3 align="center" style="color:black" th:text="${post.title}"></h3>
+                <p align="center" style="color:black" th:text="'(Анонс: ' + ${post.anons}  + ')'"/>
+                <p th:text="${post.fullText}"/>
+                <p> <b>Просмотров: </b> <span th:text="${post.views}"/> </p>
+                <p> <b>Дата создания поста: </b> <span th:text="${post.createdPostDate}"/> </p>
+                <p> <b>Дата пследнего редактирования поста: </b> <span th:text="${post.changedPostDate}"/> </p>
+                <a th:href="'/post/' + ${post.id} + '/edit'" class="btn btn-warning">Редактировать</a>
+                <a th:href="'/post/' + ${post.id} + '/delete'" class="btn btn-danger">Удалить</a>
+            </div>
+
+            <div>
+                <span th:if="${errorMessage} != null">
+                    <p style="color:red" th:text="${errorMessage}"></p>
+                </span>
+                <form action="subscribe" th:attr="action=@{'/post/' + ${post.id} + '/add-comment'}"} method="post">
+                    <input type="text" name="message" style="width: 50%"  placeholder="Оставте ваш коментарий">
+                    <button type="submit" class="btn btn-success">Опубликовать</button>
+                </form>
+            </div>
+            <div th:insert="blocks/comments :: comments"></div>
         </div>
 
-        <div>
-            <h3>Всего коментариев :</h3>
-            <form action="subscribe" th:attr="action=@{'/post/' + ${post.id} + '/add-comment'}"} method="post">
-                <input type="text" name="message" placeholder="Оставте ваш коментарий">
-                <br>
-                <button type="submit" class="btn btn-success">Опубликовать</button>
-            </form>
-        </div>
-
-    </div>
-
-    <div th:insert="blocks/comments :: comments"></div>
-
-    <div th:insert="blocks/footer :: footer"></div>
+        <div th:insert="blocks/footer :: footer"></div>
 
     </body>
 

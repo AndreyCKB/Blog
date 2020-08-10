@@ -1,6 +1,8 @@
 package com.example.rest.spring.blog.models;
 
 
+import com.example.rest.spring.blog.util.DateConverter;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 
@@ -39,12 +41,12 @@ public class User {
     @OneToMany(mappedBy = "user",  orphanRemoval = true)
     private List<Post> posts;
 
-    public List<Post> getPosts() {
-        return posts;
+    public long getId() {
+        return id;
     }
 
-    public void setPosts(List<Post> posts) {
-        this.posts = posts;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public Date getBirthday() {
@@ -53,14 +55,6 @@ public class User {
 
     public void setBirthday(Date birthday) {
         this.birthday = birthday;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getFirstName() {
@@ -103,6 +97,27 @@ public class User {
         this.dateRegistration = dateRegistration;
     }
 
+    public List<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
+    }
+
+    public String getFullName(){
+        String result;
+        if (this.surname == null) {
+            result = this.email.substring(0,this.email.indexOf('@'));
+        }
+        else {
+            String firstCharName = this.firstName != null ? (Character.toUpperCase(this.firstName.toCharArray()[0]) + ".") : "";
+            String firstCharMiddleName = this.middleName != null ? (Character.toUpperCase(this.middleName.toCharArray()[0]) + ".") : "";
+            result = this.surname + " " + firstCharName + firstCharMiddleName;
+        }
+        return result;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -111,7 +126,6 @@ public class User {
                 ", firstName='" + firstName + '\'' +
                 ", surname='" + surname + '\'' +
                 ", middleName='" + middleName + '\'' +
-                ", birthday=" + birthday +
                 ", date registration=" + dateRegistration +
                 '}';
     }

@@ -14,11 +14,13 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 
-@Component
 public class DateConverter {
 //Переделать через map и добавить время
 
-    public  Date stringInFormat_yyyy_MM_dd_toDate(String str)  {
+    private DateConverter() {
+    }
+
+    public  static Date stringInFormat_yyyy_MM_dd_toDate(String str)  {
         if (str == null) {
             throw new ErrorMessageForUserException("Дата не введена");
         }
@@ -40,7 +42,7 @@ public class DateConverter {
     }
 
 
-    public  String dateToString(Date date){
+    public  static String dateToString(Date date){
         if (date == null) {
             throw new ErrorMessageForUserException("Дата не введена");
         }
@@ -48,15 +50,15 @@ public class DateConverter {
         return df.format(date);
     }
 
-    public  String dateAndTimeToString(Date date){
+    public  static String dateAndTimeToString(Date date){
         if (date == null) {
             throw new ErrorMessageForUserException("Дата не введена");
         }
-        DateFormat df = new SimpleDateFormat("dd MMMMM yyyy HH:mm");
+        DateFormat df = new SimpleDateFormat("dd MMMMM yyyy  HH:mm");
         return df.format(date);
     }
 
-    public  String dateToStringMonthInWords(Date date){
+    public  static String dateToStringMonthInWords(Date date){
         if (date == null) {
             throw new ErrorMessageForUserException("Дата не введена");
         }

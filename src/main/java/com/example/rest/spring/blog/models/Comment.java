@@ -1,5 +1,7 @@
 package com.example.rest.spring.blog.models;
 
+import com.example.rest.spring.blog.util.DateConverter;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -21,15 +23,11 @@ public class Comment implements Comparable<Comment>{
     private Date createdDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     private Post post;
 
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
 
     public long getCommentId() {
         return commentId;
@@ -47,12 +45,32 @@ public class Comment implements Comparable<Comment>{
         this.message = message;
     }
 
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
     public Post getPost() {
         return post;
     }
 
     public void setPost(Post post) {
         this.post = post;
+    }
+
+    public String dateRegistrationToString() {
+        return createdDate != null ? DateConverter.dateAndTimeToString(this.createdDate) : "";
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override
