@@ -39,10 +39,13 @@ public class PostServiceImpl implements  PostService {
         } else {
             throw new ErrorMessageForUserException("Не зарегистрированные пользователи не могут публиковать посты");
         }
+        if (postRepository.existsByTitleIgnoreCase(post.getTitle())) {
+            throw new ErrorMessageForUserException("Название статьй дожно быть уникальным. Введите новое название темы");
+        }
         return saveNewPost(post);
     }
 
-    private  <S extends Post> S saveNewPost(S post){
+    private  <S extends Post> S saveNewPost(S post) {
         Date now = new Date();
         post.setCreatedPostDate(now);
         post.setChangedPostDate(now);

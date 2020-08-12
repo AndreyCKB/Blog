@@ -34,4 +34,5 @@ public interface PostRepository extends CrudRepository<Post, Long>, PagingAndSor
     void updateAnonsAndFullText(@Param("postID") long postID, @Param("anons")  String anons,
                                 @Param("fullText")  String fullText, @Param("changedPostDate") Date changeDate);
 
+    boolean existsByTitleIgnoreCase(String title);
 }

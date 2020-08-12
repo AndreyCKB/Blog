@@ -19,4 +19,7 @@ public interface PostService extends ExtendedService<Post, Long> {
     Page findAllAndSortByParameter(int page, String parameterSort) throws ErrorMessageForUserException;
 
     <S extends Post> S addCommentToPost(Comment comment, long postId) throws ErrorMessageForUserException;
+
+
+
 }

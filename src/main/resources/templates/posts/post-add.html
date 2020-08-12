@@ -23,16 +23,19 @@
                 <select name="topic" class="custom-select mr-sm-2" style="width: auto">
                     <option selected value="0">Выберите тему статьй...</option>
                     <div th:each="topic : ${topics}" class="alert alert-info mt 2">
-                        <option th:value="${topic.topicId}">
+                        <option th:if="${topicID} == ${topic.topicId}" selected th:value="${topic.topicId}">
+                            <span th:text="${topic.name}"/>
+                        </option>
+                        <option th:if="${topicID} != ${topic.topicId}" th:value="${topic.topicId}">
                             <span th:text="${topic.name}"/>
                         </option>
                     </div>
                 </select>
                 <a th:href="'/topic/page-add'" class="btm btm-warning"><strong>Добавить новую тему</strong></a>
                 <br><br>
-                <input type="text" name="title"  placeholder="Введите название статьй" class="form-control"><br>
-                <input type="text" name="anons" placeholder="Введите анонс статьй" class="form-control"><br>
-                <textarea name="fullText" placeholder="Введите текст статьй" class="form-control"></textarea><br>
+                <input type="text" name="title" th:value="${post} != null ? ${post.title} : ''" placeholder="Введите название статьй" class="form-control"><br>
+                <input type="text" name="anons" th:value="${post} != null ? ${post.anons} : ''" placeholder="Введите анонс статьй" class="form-control"><br>
+                <textarea name="fullText" th:value="${post} != null ? ${post.fullText} : ''" placeholder="Введите текст статьй" class="form-control"></textarea><br>
                 <input type="hidden" name="views" th:value="0"><br>
                 <button type="submit" class="btn btn-success">Добавить статью</button>
         </form>

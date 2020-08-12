@@ -1,5 +1,7 @@
 package com.example.rest.spring.blog.controller;
 
+import com.example.rest.spring.blog.controller.pagination.Pagination;
+import com.example.rest.spring.blog.exception.ErrorMessageForUserException;
 import com.example.rest.spring.blog.models.Comment;
 import com.example.rest.spring.blog.models.Post;
 import com.example.rest.spring.blog.models.wrapper.entitys.HtmlPost;
@@ -26,33 +28,30 @@ public class PostController {
     }
 
     @GetMapping("/list_posts")
-    public String listPosts(@RequestParam(value = "page_number", required = false) Integer pageNumber,
+    public String listPosts(@RequestParam(value = "page_number", required = false, defaultValue = "1") int pageNumber,
                              Model model) {
         long countPosts = this.postService.count();
         if (countPosts == 0) {
             model.addAttribute("errorMessage", "База постов пуста.");
             return "/posts/post-list";
         }
-        if (pageNumber == null){
-            pageNumber = 1;
-        }
-        Iterable<Post> posts = this.postService.findAllAndSortByParameter(--pageNumber, ParameterSort.ANONS.name());
+        Iterable<Post> posts = this.postService.findAllAndSortByParameter(pageNumber - 1, ParameterSort.ANONS.name());
         long totalElements = ((Page<Post>) posts).getTotalElements();
         if (totalElements == 0)
             posts = this.postService.findAllAndSortByParameter(0, ParameterSort.ANONS.name());
-        model.addAttribute("pages", pages(countPosts));
+        model.addAttribute("pages", Pagination.getPages(pageNumber,countPosts, 3));
         this.addPostsInModelForList(posts,model,null);
         return "/posts/post-list";
     }
 
-    private int[] pages(long countPosts){
-        int countPages =(int) (countPosts % 3 == 0 ? (countPosts / 3) : (countPosts / 3 + 1));
-        int [] pages = new int [countPages];
-        for (int i = 0; i < countPages; i++ ){
-            pages[i] = i+1;
-        }
-        return pages;
-    }
+//    private int[] pages(long countPosts){
+//        int countPages =(int) (countPosts % 3 == 0 ? (countPosts / 3) : (countPosts / 3 + 1));
+//        int [] pages = new int [countPages];
+//        for (int i = 0; i < countPages; i++ ){
+//            pages[i] = i+1;
+//        }
+//        return pages;
+//    }
 
 
     @PostMapping("/list_posts/sort")
@@ -60,9 +59,12 @@ public class PostController {
         Iterable<Post> posts = this.postService.findAllAndSortByParameter(0, parameterSort);
         String errorMessage = null;
         if ( ((Page<Post>) posts).getTotalElements() == 0 ) {
-            errorMessage = "База постов пуста.";
+            model.addAttribute("errorMessage", "База постов пуста.");
+        } else {
+            model.addAttribute("posts", posts);
         }
-        this.addPostsInModelForList(posts,model,errorMessage);
+        model.addAttribute("selected_parameterSort", ParameterSort.valueOf(parameterSort));
+        model.addAttribute("typeSort", ParameterSort.values());
         return "/posts/post-list";
     }
 
@@ -75,7 +77,6 @@ public class PostController {
             this.postService.updateViews(postID);
             htmlPost.setPost(this.postService.findById(postID).get());
         }catch (Exception e){
-            e.printStackTrace();
             model.addAttribute("errorMessage", "В базе не найдено поста с таким id ( id = " + postID);
             return "redirect:/post/list_posts";
         }
@@ -97,7 +98,16 @@ public class PostController {
             model.addAttribute("post", post);
             return "/posts/post-add";
         }
-        this.postService.save(post);
+        try {
+            this.postService.save(post);
+        }catch (ErrorMessageForUserException e){
+            e.printStackTrace();
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("topicID", post.getTopic().getTopicId());
+            model.addAttribute("topics", this.topicService.findAll());
+            model.addAttribute("post", post);
+            return "/posts/post-add";
+        }
         return "redirect:/post/list_posts";
     }
 
