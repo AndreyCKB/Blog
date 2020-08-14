@@ -29,45 +29,40 @@ public class PostController {
 
     @GetMapping("/list_posts")
     public String listPosts(@RequestParam(value = "page_number", required = false, defaultValue = "1") int pageNumber,
-                             Model model) {
+                            @RequestParam(name = "parameterSort", required = false, defaultValue = "TITLE") String parameterSort,
+                            Model model) {
+        return commonForListPosts(pageNumber,parameterSort, model);
+    }
+
+
+    @PostMapping("/list_posts/sort")
+    public String listPostsSort(@RequestParam(value = "page_number", required = false, defaultValue = "1") int pageNumber,
+                                @RequestParam(name = "parameterSort") String parameterSort,
+                                Model model) {
+        return commonForListPosts(pageNumber,parameterSort, model);
+    }
+
+    private String commonForListPosts(int pageNumber,
+                                      String parameterSort,
+                                      Model model){
+        if (pageNumber < 1) {
+            pageNumber = 1;
+        }
         long countPosts = this.postService.count();
         if (countPosts == 0) {
             model.addAttribute("errorMessage", "База постов пуста.");
             return "/posts/post-list";
         }
-        Iterable<Post> posts = this.postService.findAllAndSortByParameter(pageNumber - 1, ParameterSort.ANONS.name());
-        long totalElements = ((Page<Post>) posts).getTotalElements();
-        if (totalElements == 0)
-            posts = this.postService.findAllAndSortByParameter(0, ParameterSort.ANONS.name());
-        model.addAttribute("pages", Pagination.getPages(pageNumber,countPosts, 3));
-        this.addPostsInModelForList(posts,model,null);
-        return "/posts/post-list";
-    }
-
-//    private int[] pages(long countPosts){
-//        int countPages =(int) (countPosts % 3 == 0 ? (countPosts / 3) : (countPosts / 3 + 1));
-//        int [] pages = new int [countPages];
-//        for (int i = 0; i < countPages; i++ ){
-//            pages[i] = i+1;
-//        }
-//        return pages;
-//    }
-
-
-    @PostMapping("/list_posts/sort")
-    public String postsSort(@RequestParam(name = "parameterSort") String parameterSort,Model model) {
-        Iterable<Post> posts = this.postService.findAllAndSortByParameter(0, parameterSort);
-        String errorMessage = null;
-        if ( ((Page<Post>) posts).getTotalElements() == 0 ) {
-            model.addAttribute("errorMessage", "База постов пуста.");
-        } else {
-            model.addAttribute("posts", posts);
+        Page page = this.postService.findAllAndSortByParameter(pageNumber - 1, parameterSort);
+        if (page.isEmpty()) {
+            page = this.postService.findAllAndSortByParameter(0, parameterSort);
         }
-        model.addAttribute("selected_parameterSort", ParameterSort.valueOf(parameterSort));
+        model.addAttribute("pages", Pagination.getPages(pageNumber,countPosts, 3));
+        model.addAttribute("posts", page.iterator());
+        model.addAttribute("paramSort", ParameterSort.valueOf(parameterSort));
         model.addAttribute("typeSort", ParameterSort.values());
         return "/posts/post-list";
     }
-
 
 
     //    несколько параметров указываются через / На пример ("/blog/{id}/{newParam}")
@@ -101,7 +96,6 @@ public class PostController {
         try {
             this.postService.save(post);
         }catch (ErrorMessageForUserException e){
-            e.printStackTrace();
             model.addAttribute("errorMessage", e.getMessage());
             model.addAttribute("topicID", post.getTopic().getTopicId());
             model.addAttribute("topics", this.topicService.findAll());
@@ -117,7 +111,6 @@ public class PostController {
         try {
             model.addAttribute("post", this.postService.findById(id).get());
         }catch (RuntimeException e){
-            e.printStackTrace();
             model.addAttribute("errorMessage", "В базе не найдено поста с таким id ( id = " + id);
             return "redirect:/post/list_posts";
         }

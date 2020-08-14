@@ -1,6 +1,7 @@
 package com.example.rest.spring.blog.models;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Entity
@@ -12,7 +13,8 @@ public class Topic {
     @Column(name = "topic_id")
     private long topicId;
 
-    @Column(name="name", unique = true)
+    @NotBlank()
+    @Column(name="name", unique = true, nullable = false)
     private String name;
 
     @OneToMany(mappedBy = "topic",  orphanRemoval = true)

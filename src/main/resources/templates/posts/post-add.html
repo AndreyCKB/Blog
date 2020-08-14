@@ -23,10 +23,7 @@
                 <select name="topic" class="custom-select mr-sm-2" style="width: auto">
                     <option selected value="0">Выберите тему статьй...</option>
                     <div th:each="topic : ${topics}" class="alert alert-info mt 2">
-                        <option th:if="${topicID} == ${topic.topicId}" selected th:value="${topic.topicId}">
-                            <span th:text="${topic.name}"/>
-                        </option>
-                        <option th:if="${topicID} != ${topic.topicId}" th:value="${topic.topicId}">
+                        <option th:selected="${topicID} == ${topic.topicId}"  th:value="${topic.topicId}">
                             <span th:text="${topic.name}"/>
                         </option>
                     </div>

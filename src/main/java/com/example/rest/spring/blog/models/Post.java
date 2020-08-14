@@ -5,6 +5,7 @@ package com.example.rest.spring.blog.models;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 import java.util.Date;
 import java.util.List;
@@ -22,25 +23,28 @@ public class Post {
     @ManyToOne(fetch = FetchType.LAZY)
     private Topic topic;
 
-    @Column(name="title", unique = true, length = 100)
+    @NotBlank()
+    @Column(name="title", unique = true, length = 100,nullable = false)
     private String title;
 
-    @Column(name="anons")
+    @NotBlank()
+    @Column(name="anons",nullable = false)
     private String anons;
 
+    @NotBlank()
     @Type(type = "text")
-    @Column(name="full_text")
+    @Column(name="full_text", nullable = false)
     private String fullText;
 
     @Column(name="views")
     private int views;
 
     @Temporal(TemporalType.DATE)
-    @Column(name="created_Post_Date")
+    @Column(name="created_Post_Date", nullable = false)
     private Date createdPostDate;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="changed_Post_Date")
+    @Column(name="changed_Post_Date", nullable = false)
     private Date changedPostDate;
 
     @OneToMany(mappedBy = "post",  orphanRemoval = true)

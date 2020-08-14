@@ -19,7 +19,7 @@ public class Comment implements Comparable<Comment>{
     private String message;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="created_date")
+    @Column(name="created_date", nullable = false)
     private Date createdDate;
 
     @ManyToOne(fetch = FetchType.LAZY)

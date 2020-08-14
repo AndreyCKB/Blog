@@ -26,11 +26,7 @@
 
             <select name="parameterSort" size="1" id="modelId">
                 <div th:each="sort : ${typeSort}" class="alert alert-info mt 2">
-                    <option  th:if="${sort} == ${selected_parameterSort}" selected th:value="${sort}">
-                        <span th:text="${sort.getParameterSort()}"/>
-                    </option>
-
-                    <option  th:if="${sort} != ${selected_parameterSort}" th:value="${sort}">
+                    <option  th:selected="${sort} == ${paramSort}"  th:value="${sort}">
                         <span th:text="${sort.getParameterSort()}"/>
                     </option>
                 </div>
@@ -49,8 +45,8 @@
         </div>
             <center>
             <span th:each="page : ${pages}">
-                <a th:if="${page.name} != current"  th:href="'/post/list_posts?page_number=' + ${page.numberPage}" th:text="${page.name}"></a>
-                <a th:if="${page.name} == current"  th:href="'/post/list_posts?page_number=' + ${page.numberPage}" th:text="${page.numberPage}" style="color:red"></a>
+                <a th:if="${page.name} != current"  th:href="'/post/list_posts?page_number=' + ${page.numberPage} + '&amp;parameterSort=' + ${paramSort}" th:text="${page.name}"></a>
+                <a th:if="${page.name} == current"  th:href="'/post/list_posts?page_number=' + ${page.numberPage} + '&amp;parameterSort=' + ${paramSort}" th:text="${page.numberPage}" style="color:red"></a>
             </span>
             </center>
     </div>
