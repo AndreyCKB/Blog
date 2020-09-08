@@ -7,13 +7,12 @@
         </div>
         <div th:if=" ${comments} != null">
             <a th:href="'/post/' + ${post.id} + '/all-comments?enable_comments=false'" class="btn btn-danger">Скрыть коментарии</a>
-            <h3>Всего коментариев : <span th:text="${comments.size()}"> </span></h3>
+            <h3 th:text=" ${comments.size()} == 0 ? 'К данной статье нет коментариев' : 'Всего коментариев : ' + ${comments.size()}"> </h3>
             <div th:each="comment : ${comments}" class="alert alert-info mt 2">
-                <p th:text="${comment.user.fullName} + '(Дата создания: ' + ${comment.dateRegistrationToString()} + ')'"/>
+                <p th:text="'Имя пользователя ' + ${comment.user.fullName}"/>
                 <p th:text="${comment.message}"/>
+                <p th:text="${comment.dateRegistrationToString()}"/>
             </div>
         </div>
-
-
     </comments>
 </div>

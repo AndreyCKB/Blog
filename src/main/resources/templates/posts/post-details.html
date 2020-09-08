@@ -15,13 +15,17 @@
 
         <div class="container mt-5">
             <div  class="alert alert-info mt 2">
-                <p align="center" th:text="'Тема: ' + ${post.topic.name}"/>
-                <h3 align="center" style="color:black" th:text="${post.title}"></h3>
-                <p align="center" style="color:black" th:text="'(Анонс: ' + ${post.anons}  + ')'"/>
+                <span style="line-height: 0.4em">
+                    <p align="center" th:text="'Тема: ' + ${post.topic.name}"/>
+                    <h3 align="center" style="color:black" th:text="${post.title}"></h3>
+                    <p align="center" style="color:black" th:text="'(Анонс: ' + ${post.anons}  + ')'"/>
+                </span>
                 <p th:text="${post.fullText}"/>
-                <p> <b>Просмотров: </b> <span th:text="${post.views}"/> </p>
-                <p> <b>Дата создания поста: </b> <span th:text="${post.createdPostDate}"/> </p>
-                <p> <b>Дата пследнего редактирования поста: </b> <span th:text="${post.changedPostDate}"/> </p>
+                <span style="line-height: 0.4em">
+                    <p> <b>Просмотров: </b> <span th:text="${post.views}"/> </p>
+                    <p> <b>Дата создания поста: </b> <span th:text="${post.createdPostDate}"/> </p>
+                    <p> <b>Дата пследнего редактирования поста: </b> <span th:text="${post.changedPostDate}"/> </p>
+                </span>
                 <a th:href="'/post/' + ${post.id} + '/edit'" class="btn btn-warning">Редактировать</a>
                 <a th:href="'/post/' + ${post.id} + '/delete'" class="btn btn-danger">Удалить</a>
             </div>

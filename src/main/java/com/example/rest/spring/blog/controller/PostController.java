@@ -8,6 +8,8 @@ import com.example.rest.spring.blog.models.wrapper.entitys.HtmlPost;
 import com.example.rest.spring.blog.service.post.ParameterSort;
 import com.example.rest.spring.blog.service.post.PostService;
 import com.example.rest.spring.blog.service.topic.TopicService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +20,8 @@ import java.util.*;
 @Controller
 @RequestMapping("/post")
 public class PostController {
+
+    public static final Logger logger = LoggerFactory.getLogger(PostController.class);
 
     private PostService postService;
     private TopicService topicService;
@@ -30,6 +34,8 @@ public class PostController {
     @GetMapping("/list_posts")
     public String listPosts(@RequestParam(value = "page_number", required = false, defaultValue = "1") int pageNumber,
                              Model model) {
+        logger.trace("Method \"listPosts(@RequestParam(value = \"page_number\", required = false, defaultValue = \"1\") int pageNumber," +
+                "Model model)\" started");
         long countPosts = this.postService.count();
         if (countPosts == 0) {
             model.addAttribute("errorMessage", "База постов пуста.");
@@ -114,6 +120,7 @@ public class PostController {
 
     @GetMapping("/{id}/edit")
     public String editPostPage(@PathVariable(value = "id") long id, Model model) {
+        logger.trace("Method \"editPostPage(@PathVariable(value = \"id\") long id = \"{}\", Model model = \"{}\") started", id , model);
         try {
             model.addAttribute("post", this.postService.findById(id).get());
         }catch (RuntimeException e){
@@ -126,6 +133,7 @@ public class PostController {
 
     @PostMapping("/{id}/edit")
     public String editPost(@ModelAttribute("post")Post post) {
+        logger.trace("Method \"editPost(@ModelAttribute(\"post\")Post post = \"{}\") started", post);
         this.postService.save(post);
         return "redirect:/post/list_posts";
     }
@@ -177,12 +185,18 @@ public class PostController {
                              @ModelAttribute(name = "comment") Comment comment,
                              HtmlPost htmlPost,
                              Model model) {
+        logger.trace("Method addComment(@PathVariable(value = \"id\") long id = \"{}\",\n" +
+                "                             @ModelAttribute(name = \"comment\") Comment comment = \"{}\",\n" +
+                "                             HtmlPost htmlPost = \"{}\",\n" +
+                "                             Model model = \"{}\") started", id, comment, htmlPost, model);
         if( comment == null || comment.getMessage() == null || comment.getMessage().isEmpty()){
-            model.addAttribute("errorMessage", "Ввы не ввели текст для комментария");
+            model.addAttribute("errorMessage", "Вы не ввели текст для комментария");
             model.addAttribute("post",  htmlPost.setPost(this.postService.findById(id).get()));
         }else {
             model.addAttribute("post",  htmlPost.setPost(this.postService.addCommentToPost(comment, id)));
+            model.addAttribute("comments", htmlPost.getComments());
         }
+        logger.trace("Model = \"{}\" ", model);
         return "/posts/post-details";
     }
 
