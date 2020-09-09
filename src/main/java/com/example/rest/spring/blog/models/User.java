@@ -1,8 +1,6 @@
 package com.example.rest.spring.blog.models;
 
 
-import com.example.rest.spring.blog.util.DateConverter;
-
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 
@@ -10,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 public class User {
 
     @Id
