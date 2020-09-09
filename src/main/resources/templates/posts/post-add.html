@@ -32,7 +32,7 @@
                 <br><br>
                 <input type="text" name="title" th:value="${post} != null ? ${post.title} : ''" placeholder="Введите название статьй" class="form-control"><br>
                 <input type="text" name="anons" th:value="${post} != null ? ${post.anons} : ''" placeholder="Введите анонс статьй" class="form-control"><br>
-                <textarea name="fullText" th:value="${post} != null ? ${post.fullText} : ''" placeholder="Введите текст статьй" class="form-control"></textarea><br>
+                <textarea name="fullText" th:text="${post} != null ? ${post.fullText} : ''" placeholder="Введите текст статьй" class="form-control"></textarea><br>
                 <input type="hidden" name="views" th:value="0"><br>
                 <button type="submit" class="btn btn-success">Добавить статью</button>
         </form>

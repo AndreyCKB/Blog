@@ -36,6 +36,10 @@
         </form>
     </div>
 
+    <div th:if="${errorMessage} != null" class="container mt-5">
+        <p style="color:red; font-size: 2em" th:text="${errorMessage}"></p>
+    </div>
+
     <div th:if="${posts} != null" class="container mt-5">
         <h2>Список постов</h2>
         <div th:each="post : ${posts}" class="alert alert-info mt 2">
@@ -50,9 +54,7 @@
             </span>
             </center>
     </div>
-    <div th:if="${errorMessage} != null" class="container mt-5">
-        <p style="color:red" th:text="${errorMessage}"></p>
-    </div>
+
 
     <div th:insert="blocks/footer :: footer"></div>
 

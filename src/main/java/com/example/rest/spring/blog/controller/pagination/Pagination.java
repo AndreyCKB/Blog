@@ -1,14 +1,31 @@
 package com.example.rest.spring.blog.controller.pagination;
 
-import java.util.Arrays;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Pagination {
+
+    public static final Logger logger = LoggerFactory.getLogger(Pagination.class);
+
     private static Pagination INSTANCE = new Pagination();
+    private static int quantityUnitOnPage = 3;
 
     private Pagination() {
     }
 
     public static Page[] getPages(int currentPage, long quantityUnit, int quantityUnitOnPage){
+        logger.trace("getPages(int currentPage = \"{}\", long quantityUnit = \"{}\", quantityUnitOnPage) = \"{}\"", currentPage, quantityUnit, quantityUnitOnPage);
+        int endPage =(int) (quantityUnit % quantityUnitOnPage == 0 ? (quantityUnit / quantityUnitOnPage) : (quantityUnit / quantityUnitOnPage + 1));
+        if (endPage == 1){
+            return new Page[]{Page.valueOf("current", 1)};
+        }else {
+            return INSTANCE.main(currentPage, endPage);
+        }
+    }
+
+    public static Page[] getPages(int currentPage, long quantityUnit){
+        logger.trace("getPages(int currentPage = \"{}\", long quantityUnit = \"{}\")", currentPage, quantityUnit);
+        logger.debug("quantityUnitOnPage = \"{}\"", quantityUnitOnPage);
         int endPage =(int) (quantityUnit % quantityUnitOnPage == 0 ? (quantityUnit / quantityUnitOnPage) : (quantityUnit / quantityUnitOnPage + 1));
         if (endPage == 1){
             return new Page[]{Page.valueOf("current", 1)};
@@ -61,7 +78,4 @@ public class Pagination {
         }
     }
 
-    public static void main(String[] args) {
-        System.out.println(Arrays.toString(getPages(2,4,3)));
-    }
 }

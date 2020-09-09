@@ -35,14 +35,19 @@ public class PostController {
     public String listPosts(@RequestParam(value = "page_number", required = false, defaultValue = "1") int pageNumber,
                             @RequestParam(name = "parameterSort", required = false, defaultValue = "TITLE") String parameterSort,
                             Model model) {
+        logger.trace("listPosts(@RequestParam(value = \"page_number\", required = false, defaultValue = \"1\") int pageNumber = \"{}\",\n" +
+                "                            @RequestParam(name = \"parameterSort\", required = false, defaultValue = \"TITLE\") String parameterSort = \"{}\",\n" +
+                "                            Model model = = \"{}\")",pageNumber, parameterSort, model);
         return commonForListPosts(pageNumber,parameterSort, model);
     }
-
 
     @PostMapping("/list_posts/sort")
     public String listPostsSort(@RequestParam(value = "page_number", required = false, defaultValue = "1") int pageNumber,
                                 @RequestParam(name = "parameterSort") String parameterSort,
                                 Model model) {
+        logger.trace("listPostsSort(@RequestParam(value = \"page_number\", required = false, defaultValue = \"1\") int pageNumber = \"{}\",\n" +
+                "                            @RequestParam(name = \"parameterSort\") String parameterSort = \"{}\",\n" +
+                "                            Model model = = \"{}\")",pageNumber, parameterSort, model);
         return commonForListPosts(pageNumber,parameterSort, model);
     }
 
@@ -54,14 +59,16 @@ public class PostController {
         }
         long countPosts = this.postService.count();
         if (countPosts == 0) {
+            logger.debug("Base Post is empty");
             model.addAttribute("errorMessage", "База постов пуста.");
             return "/posts/post-list";
         }
+        logger.debug("Count posts = \"{}\"", countPosts);
         Page page = this.postService.findAllAndSortByParameter(pageNumber - 1, parameterSort);
         if (page.isEmpty()) {
             page = this.postService.findAllAndSortByParameter(0, parameterSort);
         }
-        model.addAttribute("pages", Pagination.getPages(pageNumber,countPosts, 3));
+        model.addAttribute("pages", Pagination.getPages(pageNumber,countPosts));
         model.addAttribute("posts", page.iterator());
         model.addAttribute("paramSort", ParameterSort.valueOf(parameterSort));
         model.addAttribute("typeSort", ParameterSort.values());
@@ -77,9 +84,9 @@ public class PostController {
             this.postService.updateViews(postID);
             htmlPost.setPost(this.postService.findById(postID).get());
         }catch (Exception e){
-            model.addAttribute("errorMessage", "В базе не найдено поста с таким id ( id = " + postID);
-            return "redirect:/post/list_posts";
+            return postIDNotFound(postID, e, model);
         }
+        logger.debug("Post with id = \"{}\" found", postID);
         model.addAttribute("post", htmlPost);
         return "/posts/post-details";
     }
@@ -87,6 +94,7 @@ public class PostController {
     @GetMapping("/add")
     public String addPostPage(Model model) {
         model.addAttribute("topics", this.topicService.findAll());
+        logger.debug("All topicsModel added to model.");
         return "/posts/post-add";
     }
 
@@ -94,23 +102,22 @@ public class PostController {
     public String addPost(@ModelAttribute("post")Post post, Model model) {
         if (post.getTopic() == null ){
             model.addAttribute("errorMessage", "Вы не выбрали тему для поста.");
-            model.addAttribute("topics", this.topicService.findAll());
-            model.addAttribute("post", post);
-            return "/posts/post-add";
+            logger.debug("Topic not added to post");
+            return  addPostPage(model);
         }
+        Post save;
         try {
-            this.postService.save(post);
+            save = this.postService.save(post);
         }catch (ErrorMessageForUserException e){
-            e.printStackTrace();
+            logger.warn("Method addPost(@ModelAttribute(\"post\")Post post, Model model)",e);
             model.addAttribute("errorMessage", e.getMessage());
             model.addAttribute("topicID", post.getTopic().getTopicId());
-            model.addAttribute("topics", this.topicService.findAll());
             model.addAttribute("post", post);
-            return "/posts/post-add";
+            return  addPostPage(model);
         }
+        logger.debug("Post added to base. Post = \"{}\"", save);
         return "redirect:/post/list_posts";
     }
-
 
     @GetMapping("/{id}/edit")
     public String editPostPage(@PathVariable(value = "id") long id, Model model) {
@@ -118,9 +125,7 @@ public class PostController {
         try {
             model.addAttribute("post", this.postService.findById(id).get());
         }catch (RuntimeException e){
-            e.printStackTrace();
-            model.addAttribute("errorMessage", "В базе не найдено поста с таким id ( id = " + id);
-            return "redirect:/post/list_posts";
+            return postIDNotFound(id, e, model);
         }
         return "/posts/post-edit";
     }
@@ -128,37 +133,44 @@ public class PostController {
     @PostMapping("/{id}/edit")
     public String editPost(@ModelAttribute("post")Post post) {
         logger.trace("Method \"editPost(@ModelAttribute(\"post\")Post post = \"{}\") started", post);
-        this.postService.save(post);
+        Post save = this.postService.save(post);
+        logger.debug("Post edit. Current post = \"{}\"", save);
         return "redirect:/post/list_posts";
     }
 
     @GetMapping("/{id}/delete")
-    public String blogDelete(@PathVariable(value = "id") long id) {
-        this.postService.deleteById(id);
+    public String postDelete(@PathVariable(value = "id") long id, Model model) {
+        logger.trace("blogDelete(@PathVariable(value = \"id\") long id =\"{}\") started", id);
+        try {
+            this.postService.deleteById(id);
+        }catch (RuntimeException e){
+            return postIDNotFound(id, e, model);
+        }
+        logger.debug("Post with id = \"{}\" deleted", id);
         return "redirect:/post/list_posts";
     }
 
     @PostMapping("/find_post")
     public String findPost(@RequestParam(name = "keyword",required = false) String keyword, Model model) {
-        Iterable<Post> posts = new ArrayList<>(0);
+        logger.trace("findPost(@RequestParam(name = \"keyword\",required = false) String keyword = \"{}\", Model model)",keyword);
+        Iterable<Post> posts;
         String errorMessage = null;
         model.addAttribute("keyword" , keyword);
-        if (keyword != null && !keyword.isEmpty() ){
+        if (keyword != null && !keyword.isEmpty()){
             posts = this.postService.findByKeyword(keyword);
             if (posts.iterator().hasNext() == false) {
-                errorMessage = "В базе не найдено постов по вашему запросу " ;
+                logger.debug("Keyword = \"{}\" not found in database", keyword);
+                errorMessage = "В базе не найдено постов по ключевому слову \"" + keyword + "\"";
+            } else {
+                logger.debug("Posts with keyword =\"{}\" found to database.", keyword);
+                model.addAttribute("posts", posts);
             }
         } else {
-             errorMessage = "Вы ничего не ввели в строку поиска" ;
+             logger.debug("Keyword is empty");
+             errorMessage = "Вы ничего не ввели в строку поиска";
         }
-        this.addPostsInModelForList(posts,model,errorMessage);
+        model.addAttribute("errorMessage",errorMessage);
         return "/posts/post-list";
-    }
-
-    private void addPostsInModelForList(Iterable<Post> posts, Model model, String errorMessage){
-        model.addAttribute("posts", posts);
-        model.addAttribute("typeSort", ParameterSort.values());
-        model.addAttribute("errorMessage", errorMessage);
     }
 
     @GetMapping("/{id}/all-comments")
@@ -166,8 +178,17 @@ public class PostController {
                                @RequestParam(value = "enable_comments") boolean enableСomments,
                                HtmlPost htmlPost,
                                Model model) {
-        htmlPost.setPost(this.postService.findById(id).get());
+        logger.trace("showComments(@PathVariable(value = \"id\") long id = \"{}\",\n" +
+                "                               @RequestParam(value = \"enable_comments\") boolean enableСomments = \"{}\",\n" +
+                "                               HtmlPost htmlPost,\n" +
+                "                               Model model)", id, enableСomments);
+        try {
+            htmlPost.setPost(this.postService.findById(id).get());
+        }catch (RuntimeException e) {
+            return postIDNotFound(id, e, model);
+        }
         model.addAttribute("post",htmlPost);
+        logger.debug("Post with id = \"{}\" found", id);
         if (enableСomments){
             model.addAttribute("comments", htmlPost.getComments());
         }
@@ -183,15 +204,26 @@ public class PostController {
                 "                             @ModelAttribute(name = \"comment\") Comment comment = \"{}\",\n" +
                 "                             HtmlPost htmlPost = \"{}\",\n" +
                 "                             Model model = \"{}\") started", id, comment, htmlPost, model);
-        if( comment == null || comment.getMessage() == null || comment.getMessage().isEmpty()){
-            model.addAttribute("errorMessage", "Вы не ввели текст для комментария");
-            model.addAttribute("post",  htmlPost.setPost(this.postService.findById(id).get()));
-        }else {
-            model.addAttribute("post",  htmlPost.setPost(this.postService.addCommentToPost(comment, id)));
-            model.addAttribute("comments", htmlPost.getComments());
+        try {
+            if (comment == null || comment.getMessage() == null || comment.getMessage().isEmpty()) {
+                logger.debug("Message is empty in comment");
+                model.addAttribute("errorMessage", "Вы не ввели текст для комментария");
+                model.addAttribute("post", htmlPost.setPost(this.postService.findById(id).get()));
+            } else {
+                model.addAttribute("post", htmlPost.setPost(this.postService.addCommentToPost(comment, id)));
+                model.addAttribute("comments", htmlPost.getComments());
+                logger.debug("Message = \"{}\" added to comment (Comment.id = \"{}\").", comment.getMessage(), comment.getCommentId());
+            }
+        } catch (RuntimeException e) {
+            return postIDNotFound(id, e, model);
         }
-        logger.trace("Model = \"{}\" ", model);
         return "/posts/post-details";
+    }
+
+    private String postIDNotFound(long id,Exception e, Model model){
+        logger.warn("Post with id =\"{}\" not found to database.", id, e);
+        model.addAttribute("errorMessage", "Пост с id = \"" + id + "\" не найден");
+        return commonForListPosts(0,ParameterSort.ANONS.toString(),model);
     }
 
 }
