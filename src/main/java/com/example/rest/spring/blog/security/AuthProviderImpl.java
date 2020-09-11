@@ -34,6 +34,9 @@ public class AuthProviderImpl implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String email = authentication.getName();
+        if (email == null || email.isEmpty()){
+            throw new UsernameNotFoundException("Вы не ввели email.");
+        }
         User user = this.userService.findByEmailIgnoreCase(email);
         checkEmail(user, email);
         checkPassword(this.passwordRepository.findById(user.getId()), authentication.getCredentials().toString());
@@ -44,12 +47,13 @@ public class AuthProviderImpl implements AuthenticationProvider {
 
     private void checkEmail(User user, String email){
         if (user == null || !user.getEmail().equalsIgnoreCase(email)){
-            throw  new UsernameNotFoundException("Пользователь не найден");
+            throw  new UsernameNotFoundException("Пользователь не найден.");
         }
     }
+
     private void checkPassword(UserPassword authUser, String password){
         if (!this.passwordEncoder.matches(password, authUser.getPassword())) {
-            throw new BadCredentialsException("Не верный пароль");
+            throw new BadCredentialsException("Не верный пароль.");
         }
     }
 

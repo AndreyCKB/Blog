@@ -1,16 +1,23 @@
 package com.example.rest.spring.blog.controller.pagination;
 
-import java.util.HashMap;
+import com.example.rest.spring.blog.controller.PostController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Page {
+
+    public static final Logger logger = LoggerFactory.getLogger(PostController.class);
     private static final Map<String, Page> CACHE_PAGES= initCashe();
 
     private static Map<String, Page> initCashe() {
-        HashMap<String, Page> cache= new HashMap<>();
+        Map<String, Page> cache= new ConcurrentHashMap<>();
         for (int i = 1; i < 11; i++) {
-            cache.put(String.valueOf(i), new Page(i +" ", i));
+            cache.put(String.valueOf(i), new Page(i + " ", i));
         }
+        logger.debug("Cash for Pages initialized. CACHE_PAGES = \"{}\"", cache);
         return cache;
     }
 
@@ -26,18 +33,15 @@ public class Page {
         Page page = CACHE_PAGES.get(name + numberPage);
         if (page == null) {
             page = new Page(name, numberPage);
-            CACHE_PAGES.put(String.valueOf(page.getName()+numberPage), page);
+            CACHE_PAGES.put(page.getName() + numberPage, page);
+            logger.debug("Page = \"{}\" added to cash", page);
         }
+        logger.debug("Page = \"{}\" return to client", page);
         return  page;
     }
 
     public static Page valueOf(int numberPage){
-        Page page = CACHE_PAGES.get(String.valueOf(numberPage));
-        if (page == null) {
-            page = new Page(String.valueOf(numberPage), numberPage);
-            CACHE_PAGES.put(page.getName(), page);
-        }
-        return page;
+        return valueOf("", numberPage);
     }
 
 
@@ -57,7 +61,4 @@ public class Page {
                 '}';
     }
 
-    public static void main(String[] args) {
-        System.out.println(CACHE_PAGES);
-    }
 }

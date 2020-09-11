@@ -1,5 +1,7 @@
 package com.example.rest.spring.blog.models;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 

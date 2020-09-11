@@ -4,6 +4,7 @@ import com.example.rest.spring.blog.controller.pagination.Pagination;
 import com.example.rest.spring.blog.exception.ErrorMessageForUserException;
 import com.example.rest.spring.blog.models.Comment;
 import com.example.rest.spring.blog.models.Post;
+import com.example.rest.spring.blog.models.Topic;
 import com.example.rest.spring.blog.models.wrapper.entitys.HtmlPost;
 import com.example.rest.spring.blog.service.post.ParameterSort;
 import com.example.rest.spring.blog.service.post.PostService;
@@ -15,29 +16,31 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
-
 @Controller
 @RequestMapping("/post")
 public class PostController {
 
-    public static final Logger logger = LoggerFactory.getLogger(PostController.class);
+    private static final Logger logger = LoggerFactory.getLogger(PostController.class);
 
-    private PostService postService;
-    private TopicService topicService;
+    private final PostService postService;
+    private final TopicService topicService;
+    private final Pagination pagination;
 
-    public PostController(PostService postService, TopicService topicService) {
+    public PostController(PostService postService, TopicService topicService, Pagination pagination) {
         this.postService = postService;
         this.topicService = topicService;
+        this.pagination = pagination;
     }
 
     @GetMapping("/list_posts")
     public String listPosts(@RequestParam(value = "page_number", required = false, defaultValue = "1") int pageNumber,
                             @RequestParam(name = "parameterSort", required = false, defaultValue = "TITLE") String parameterSort,
                             Model model) {
+
         logger.trace("listPosts(@RequestParam(value = \"page_number\", required = false, defaultValue = \"1\") int pageNumber = \"{}\",\n" +
                 "                            @RequestParam(name = \"parameterSort\", required = false, defaultValue = \"TITLE\") String parameterSort = \"{}\",\n" +
                 "                            Model model = = \"{}\")",pageNumber, parameterSort, model);
+
         return commonForListPosts(pageNumber,parameterSort, model);
     }
 
@@ -45,18 +48,19 @@ public class PostController {
     public String listPostsSort(@RequestParam(value = "page_number", required = false, defaultValue = "1") int pageNumber,
                                 @RequestParam(name = "parameterSort") String parameterSort,
                                 Model model) {
+
         logger.trace("listPostsSort(@RequestParam(value = \"page_number\", required = false, defaultValue = \"1\") int pageNumber = \"{}\",\n" +
                 "                            @RequestParam(name = \"parameterSort\") String parameterSort = \"{}\",\n" +
                 "                            Model model = = \"{}\")",pageNumber, parameterSort, model);
+
         return commonForListPosts(pageNumber,parameterSort, model);
     }
 
     private String commonForListPosts(int pageNumber,
                                       String parameterSort,
                                       Model model){
-        if (pageNumber < 1) {
-            pageNumber = 1;
-        }
+        model.addAttribute("paramSort", ParameterSort.valueOf(parameterSort));
+
         long countPosts = this.postService.count();
         if (countPosts == 0) {
             logger.debug("Base Post is empty");
@@ -64,13 +68,15 @@ public class PostController {
             return "/posts/post-list";
         }
         logger.debug("Count posts = \"{}\"", countPosts);
+
+        pageNumber = pageNumber < 1 ? 1 : pageNumber;
         Page page = this.postService.findAllAndSortByParameter(pageNumber - 1, parameterSort);
         if (page.isEmpty()) {
             page = this.postService.findAllAndSortByParameter(0, parameterSort);
         }
-        model.addAttribute("pages", Pagination.getPages(pageNumber,countPosts));
+
+        model.addAttribute("pages", this.pagination.getPages(pageNumber,countPosts));
         model.addAttribute("posts", page.iterator());
-        model.addAttribute("paramSort", ParameterSort.valueOf(parameterSort));
         model.addAttribute("typeSort", ParameterSort.values());
         return "/posts/post-list";
     }
@@ -93,8 +99,9 @@ public class PostController {
 
     @GetMapping("/add")
     public String addPostPage(Model model) {
-        model.addAttribute("topics", this.topicService.findAll());
-        logger.debug("All topicsModel added to model.");
+        Iterable<Topic> all = this.topicService.findAll();
+        model.addAttribute("topics", all);
+        logger.debug("All topics = \"{}\" added to model.", all);
         return "/posts/post-add";
     }
 
@@ -153,23 +160,23 @@ public class PostController {
     @PostMapping("/find_post")
     public String findPost(@RequestParam(name = "keyword",required = false) String keyword, Model model) {
         logger.trace("findPost(@RequestParam(name = \"keyword\",required = false) String keyword = \"{}\", Model model)",keyword);
-        Iterable<Post> posts;
-        String errorMessage = null;
-        model.addAttribute("keyword" , keyword);
-        if (keyword != null && !keyword.isEmpty()){
-            posts = this.postService.findByKeyword(keyword);
-            if (posts.iterator().hasNext() == false) {
-                logger.debug("Keyword = \"{}\" not found in database", keyword);
-                errorMessage = "В базе не найдено постов по ключевому слову \"" + keyword + "\"";
-            } else {
-                logger.debug("Posts with keyword =\"{}\" found to database.", keyword);
-                model.addAttribute("posts", posts);
-            }
-        } else {
-             logger.debug("Keyword is empty");
-             errorMessage = "Вы ничего не ввели в строку поиска";
+
+        if (keyword == null || keyword.isEmpty()){
+            logger.debug("Keyword is empty");
+            model.addAttribute("errorMessage","Вы ничего не ввели в строку поиска");
+//            model.addAttribute("paramSort", ParameterSort.valueOf(parameterSort)); Добавит в глобальную ссесию
+            return "/posts/post-list";
         }
-        model.addAttribute("errorMessage",errorMessage);
+
+        model.addAttribute("keyword" , keyword);
+        Iterable<Post> posts = this.postService.findByKeyword(keyword);
+        if (posts.iterator().hasNext()) {
+            logger.debug("Posts with keyword =\"{}\" found to database.", keyword);
+            model.addAttribute("posts", posts);
+        } else {
+            logger.debug("Keyword = \"{}\" not found in database", keyword);
+            model.addAttribute("errorMessage","В базе не найдено постов по ключевому слову \"" + keyword + "\"");
+        }
         return "/posts/post-list";
     }
 

@@ -15,7 +15,7 @@
     <div class="container mt-5 mb-5" >
         <h3>Пойск по ключивому  слову:</h3>
         <form action="/post/find_post" method="post">
-            <input type="text" th:value="${keyword}" name="keyword" placeholder="Введите текст" class="form-control"><br>
+            <input type="text" th:value="${keyword}" pattern="^\S{1,}$" name="keyword" placeholder="Введите текст" class="form-control"><br>
             <button type="submit" class="btn btn-success">Найти</button>
         </form>
     </div>

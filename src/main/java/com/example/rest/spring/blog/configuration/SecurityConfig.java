@@ -30,7 +30,8 @@ public class SecurityConfig  extends WebSecurityConfigurerAdapter {
                 .failureUrl("/login?error_auth=true")
                 .and().exceptionHandling()
                 .accessDeniedPage("/")
-                .and().logout();    }
+                .and().logout();
+    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {

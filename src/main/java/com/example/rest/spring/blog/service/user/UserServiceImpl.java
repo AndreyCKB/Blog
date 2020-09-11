@@ -92,7 +92,6 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public <S extends User> S updateUser(S user){
-        System.out.println("!!!!!" + user);
         if (user == null || user.getEmail().isEmpty())
         {
             throw new ErrorMessageForUserException("Email не может быть пустым");
@@ -153,7 +152,6 @@ public class UserServiceImpl implements UserService{
             newPassword.append(c);
         }
         updatePassword(newPassword.toString(), getPrincipalId());
-
     }
 
 
